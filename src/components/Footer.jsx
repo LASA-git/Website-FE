@@ -4,8 +4,8 @@ import logoHires from '/logo-hires.png';
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-lasa-200 pt-16 pb-8 mt-16">
-      <div className="max-w-7xl mx-auto px-8 lg:px-16">
+    <footer className="bg-white border-t border-lasa-200 pt-12 pb-8 mt-16 sm:pt-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 lg:gap-16 mb-12">
           {/* Logo & Intro */}
           <div className="flex flex-col items-start text-left">

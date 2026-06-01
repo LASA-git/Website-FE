@@ -8,7 +8,10 @@ html {
 
 body {
   @apply font-sans;
-  background-color: #FFFFFF;
+  color: #1E3A34;
+  background-color: #F7F8F4;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Ccircle cx='1.5' cy='1.5' r='1.2' fill='%23D9E4D5'/%3E%3C/svg%3E");
+  background-size: 22px 22px;
 }
 
 @keyframes dropdown {

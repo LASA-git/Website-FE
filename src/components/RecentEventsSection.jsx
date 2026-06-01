@@ -64,14 +64,14 @@ export default function RecentEventsSection() {
   };
 
   return (
-    <section className="w-full py-16 md:py-24">
-      <div className="max-w-7xl mx-auto px-8 lg:px-16">
+    <section className="w-full py-12 sm:py-16 md:py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-lasa-600">
+          <h2 className="text-2xl font-display text-lasa-700 sm:text-3xl md:text-4xl">
             Recent Events
           </h2>
-          <p className="text-base sm:text-lg text-lasa-500 mt-3 max-w-2xl mx-auto">
+          <p className="text-sm text-lasa-600/80 mt-3 max-w-2xl mx-auto sm:text-base md:text-lg">
             Highlights from our past community service events and activities.
           </p>
         </div>
@@ -82,7 +82,7 @@ export default function RecentEventsSection() {
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
-          <div className="flex items-stretch gap-6 justify-center">
+          <div className="flex flex-col items-stretch gap-6 justify-center sm:flex-row">
             {visibleEvents.map((event, idx) => (
               <div
                 key={`${currentPage}-${idx}`}

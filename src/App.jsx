@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -7,10 +7,15 @@ import OurActivities from './pages/OurActivities';
 import FoodAndNourishment from './pages/FoodAndNourishment';
 import HealthAndWellness from './pages/HealthAndWellness';
 import MedicalClinic from './pages/MedicalClinic';
-import UpcomingEvents from './pages/UpcomingEvents';
-import PastEvents from './pages/PastEvents';
+import Events from './pages/Events';
+import ArchivedEvents from './pages/ArchivedEvents';
+import EventDetails from './pages/EventDetails';
 import ContactUs from './pages/ContactUs';
-import Donate from './pages/Donate';
+import Volunteer from './pages/Volunteer';
+import AdminLogin from './pages/AdminLogin';
+import AdminEvents from './pages/AdminEvents';
+import AdminEventForm from './pages/AdminEventForm';
+import RequireAuth from './components/admin/RequireAuth';
 
 export default function App() {
   return (
@@ -24,10 +29,39 @@ export default function App() {
           <Route path="/our-activities/food-and-nourishment" element={<FoodAndNourishment />} />
           <Route path="/our-activities/health-and-wellness" element={<HealthAndWellness />} />
           <Route path="/our-activities/medical-clinic" element={<MedicalClinic />} />
-          <Route path="/events/upcoming" element={<UpcomingEvents />} />
-          <Route path="/events/past" element={<PastEvents />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/events/:eventId" element={<EventDetails />} />
+          <Route path="/archived-events" element={<ArchivedEvents />} />
+          <Route path="/events/upcoming" element={<Navigate to="/events" replace />} />
+          <Route path="/events/past" element={<Navigate to="/archived-events" replace />} />
           <Route path="/contact" element={<ContactUs />} />
-          <Route path="/donate" element={<Donate />} />
+          <Route path="/volunteer" element={<Volunteer />} />
+          <Route path="/donate" element={<Navigate to="/volunteer" replace />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route
+            path="/admin/events"
+            element={
+              <RequireAuth>
+                <AdminEvents />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/admin/events/new"
+            element={
+              <RequireAuth>
+                <AdminEventForm />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/admin/events/:eventId/edit"
+            element={
+              <RequireAuth>
+                <AdminEventForm />
+              </RequireAuth>
+            }
+          />
         </Routes>
       </main>
       <Footer />
