@@ -11,9 +11,6 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 w-full">
           <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-10">
             <div className="text-center lg:text-left">
-              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-lasa-400">
-                Love All · Serve All
-              </p>
               <h1 className="mt-4 text-2xl font-display text-lasa-700 leading-tight sm:text-4xl lg:text-6xl">
                 Welcome to LASA Foundation
               </h1>
@@ -48,18 +45,16 @@ export default function Home() {
 
             <div className="mx-auto flex w-full max-w-sm flex-col items-center rounded-3xl border border-lasa-200 bg-white/90 px-10 py-10 shadow-xl sm:max-w-md lg:mx-0 lg:max-w-md lg:justify-self-end lg:px-12 lg:py-12">
               <img
-                src="/logo-emblem.png"
+                src="/finallogo.png"
                 alt="LASA Foundation Logo"
-                className="w-52 h-auto sm:w-56 lg:w-64"
+                className="w-64 h-auto sm:w-72 lg:w-80"
               />
 
-              <h2 className="mt-6 text-lg font-semibold text-lasa-700 tracking-[0.25em] text-center sm:text-xl">
-                LOVE ALL SERVE ALL
-              </h2>
-
-              <p className="mt-2 text-sm font-medium text-lasa-500 tracking-[0.3em] text-center uppercase">
-                LASA Foundation Inc.
-              </p>
+              <img
+                src="/write.jpeg"
+                alt="Love All Serve All - LASA Foundation Inc."
+                className="mt-6 w-full max-w-[22rem] h-auto"
+              />
 
               <div className="mt-7 flex flex-wrap justify-center gap-2.5 text-center text-xs font-semibold uppercase text-lasa-500">
                 <span className="rounded-full border border-lasa-200 bg-lasa-50 px-3 py-1">Truth</span>

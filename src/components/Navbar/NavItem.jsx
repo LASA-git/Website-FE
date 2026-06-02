@@ -43,7 +43,7 @@ export default function NavItem({ item }) {
       <NavLink
         to={item.path}
         className={({ isActive: active }) =>
-          `relative px-5 py-3 text-[17px] font-semibold tracking-wider transition-all duration-200 ${
+          `relative whitespace-nowrap px-5 py-3 text-[17px] font-semibold tracking-wider transition-all duration-200 ${
             active
               ? 'text-lasa-600 font-bold after:absolute after:bottom-[-4px] after:left-1/2 after:-translate-x-1/2 after:w-1.5 after:h-1.5 after:bg-lasa-600 after:rounded-full'
               : 'text-lasa-500 hover:text-lasa-600'
@@ -65,7 +65,7 @@ export default function NavItem({ item }) {
     >
       <button
         type="button"
-        className={`relative flex items-center gap-1 px-5 py-3 text-[17px] font-semibold tracking-wider transition-all duration-200 ${
+        className={`relative flex items-center gap-1 whitespace-nowrap px-5 py-3 text-[17px] font-semibold tracking-wider transition-all duration-200 ${
           isActive
             ? 'text-lasa-600 font-bold after:absolute after:bottom-[-4px] after:left-1/2 after:-translate-x-1/2 after:w-1.5 after:h-1.5 after:bg-lasa-600 after:rounded-full'
             : 'text-lasa-500 hover:text-lasa-600'
