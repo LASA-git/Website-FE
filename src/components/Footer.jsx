@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { NAV_LINKS } from '../constants/navLinks';
-import logoHires from '/logo-hires.png';
+import logoEmblem from '/logo-emblem.png';
 
 export default function Footer() {
   return (
@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Logo & Intro */}
           <div className="flex flex-col items-start text-left">
             <Link to="/">
-              <img src={logoHires} alt="LASA Foundation Logo" className="w-32 mb-4" />
+              <img src={logoEmblem} alt="LASA Foundation Logo" className="w-32 mb-4" />
             </Link>
             <p className="text-lasa-500 text-sm leading-relaxed max-w-xs">
               A charitable organization dedicated to community service based on Truth, Non-violence, Peace, Love, and Right Conduct.

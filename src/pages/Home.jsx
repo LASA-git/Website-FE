@@ -9,7 +9,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="flex items-start pt-6 md:pt-10 lg:pt-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 w-full">
-          <div className="grid items-center gap-8 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-10">
             <div className="text-center lg:text-left">
               <p className="text-xs font-semibold uppercase tracking-[0.35em] text-lasa-400">
                 Love All · Serve All
@@ -46,22 +46,22 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex flex-col items-center rounded-3xl border border-lasa-200 bg-white/90 p-8 shadow-xl">
+            <div className="mx-auto flex w-full max-w-sm flex-col items-center rounded-3xl border border-lasa-200 bg-white/90 px-10 py-10 shadow-xl sm:max-w-md lg:mx-0 lg:max-w-md lg:justify-self-end lg:px-12 lg:py-12">
               <img
-                src="/logo-hires.png"
+                src="/logo-emblem.png"
                 alt="LASA Foundation Logo"
-                className="w-32 sm:w-40 lg:w-56 h-auto"
+                className="w-52 h-auto sm:w-56 lg:w-64"
               />
 
-              <h2 className="mt-5 text-base sm:text-lg lg:text-xl font-semibold text-lasa-700 tracking-[0.25em] text-center">
+              <h2 className="mt-6 text-lg font-semibold text-lasa-700 tracking-[0.25em] text-center sm:text-xl">
                 LOVE ALL SERVE ALL
               </h2>
 
-              <p className="mt-2 text-xs sm:text-sm font-medium text-lasa-500 tracking-[0.3em] text-center uppercase">
+              <p className="mt-2 text-sm font-medium text-lasa-500 tracking-[0.3em] text-center uppercase">
                 LASA Foundation Inc.
               </p>
 
-              <div className="mt-6 grid grid-cols-3 gap-2 text-center text-[11px] font-semibold uppercase text-lasa-500">
+              <div className="mt-7 flex flex-wrap justify-center gap-2.5 text-center text-xs font-semibold uppercase text-lasa-500">
                 <span className="rounded-full border border-lasa-200 bg-lasa-50 px-3 py-1">Truth</span>
                 <span className="rounded-full border border-lasa-200 bg-lasa-50 px-3 py-1">Peace</span>
                 <span className="rounded-full border border-lasa-200 bg-lasa-50 px-3 py-1">Love</span>
