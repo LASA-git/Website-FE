@@ -85,24 +85,26 @@ export default function EventDetails() {
         </Link>
 
         <div className="mt-6 overflow-hidden rounded-3xl border border-lasa-200 bg-white shadow-lg">
+          <div className="border-b border-lasa-200 bg-lasa-50/80 px-4 py-5 sm:px-6 sm:py-6">
+            <p className="text-xs font-semibold uppercase tracking-wide text-lasa-400">
+              {formatDate(event.startDate)}
+            </p>
+            <h1 className="mt-2 text-2xl font-semibold text-lasa-700 sm:text-3xl">
+              {event.title}
+            </h1>
+            {event.location && (
+              <p className="mt-2 text-sm text-lasa-500 sm:text-base">{event.location}</p>
+            )}
+          </div>
+
           {heroImage && (
-            <div className="relative overflow-hidden bg-lasa-100" style={{ aspectRatio: '4 / 3' }}>
-              <img
-                src={heroImage}
-                alt={event.title}
-                className="h-full w-full object-cover"
-              />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6">
-                <p className="text-xs font-semibold uppercase tracking-wide text-white/80">
-                  {formatDate(event.startDate)}
-                </p>
-                <h1 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">
-                  {event.title}
-                </h1>
-                {event.location && (
-                  <p className="mt-2 text-sm text-white/90 sm:text-base">{event.location}</p>
-                )}
+            <div className="bg-lasa-100 p-3 sm:p-4">
+              <div className="mx-auto overflow-hidden rounded-2xl border border-lasa-200 bg-white" style={{ aspectRatio: '4 / 3' }}>
+                <img
+                  src={heroImage}
+                  alt={event.title}
+                  className="h-full w-full object-contain"
+                />
               </div>
             </div>
           )}

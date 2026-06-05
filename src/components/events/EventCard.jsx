@@ -41,7 +41,7 @@ export default function EventCard({ event, actions, onClick, to }) {
 
   const content = (
     <div
-      className={`flex h-auto min-h-[360px] flex-col overflow-hidden rounded-2xl border border-lasa-200 bg-white shadow-sm transition-shadow hover:shadow-lg md:h-[440px] ${
+      className={`flex h-full flex-col overflow-hidden rounded-2xl border border-lasa-200 bg-white shadow-sm transition-shadow hover:shadow-lg ${
         isClickable ? 'cursor-pointer hover:-translate-y-0.5' : ''
       }`}
       onClick={to ? undefined : onClick}
@@ -67,11 +67,11 @@ export default function EventCard({ event, actions, onClick, to }) {
           <p className="text-xs font-semibold uppercase tracking-wide text-lasa-400">
             {formatDate(event.startDate)}
           </p>
-          <h3 className="mt-2 text-base font-semibold text-lasa-600 sm:text-lg" style={lineClampTwo}>
+          <h3 className="mt-2 break-words text-base font-semibold text-lasa-600 sm:text-lg" style={lineClampTwo}>
             {event.title}
           </h3>
           {event.location && (
-            <p className="mt-1 text-sm text-lasa-500">{event.location}</p>
+            <p className="mt-1 break-words text-sm text-lasa-500">{event.location}</p>
           )}
         </div>
         {descriptionText && (
