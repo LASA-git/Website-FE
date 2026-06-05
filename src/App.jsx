@@ -26,9 +26,11 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about-us" element={<AboutUs />} />
           <Route path="/our-activities" element={<OurActivities />} />
-          <Route path="/our-activities/food-and-nourishment" element={<FoodAndNourishment />} />
-          <Route path="/our-activities/health-and-wellness" element={<HealthAndWellness />} />
-          <Route path="/our-activities/medical-clinic" element={<MedicalClinic />} />
+          {/* <Route path="/our-activities/food-and-nourishment" element={<FoodAndNourishment />} />
+          <Route path="/our-activities/health-and-wellness" element={<HealthAndWellness />} /> */}
+          <Route path="/our-activities/educare" element={<MedicalClinic />} />
+          <Route path="/our-activities/sociocare" element={<FoodAndNourishment />} />
+          <Route path="/our-activities/healthcare" element={<HealthAndWellness />} />
           <Route path="/events" element={<Events />} />
           <Route path="/events/:eventId" element={<EventDetails />} />
           <Route path="/archived-events" element={<ArchivedEvents />} />

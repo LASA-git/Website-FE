@@ -5,9 +5,9 @@ export const NAV_LINKS = [
     label: 'Our Activities',
     path: '/our-activities',
     children: [
-      { label: 'HealthCare', path: '/our-activities/health-and-wellness' },
-      { label: 'SocioCare', path: '/our-activities/food-and-nourishment' },
-      { label: 'EduCare', path: '/our-activities/medical-clinic' },
+      { label: 'HealthCare', path: '/our-activities/healthcare' },
+      { label: 'SocioCare', path: '/our-activities/sociocare' },
+      { label: 'EduCare', path: '/our-activities/educare' },
     ],
   },
   {
