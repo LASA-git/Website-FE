@@ -16,10 +16,12 @@ import AdminLogin from './pages/AdminLogin';
 import AdminEvents from './pages/AdminEvents';
 import AdminEventForm from './pages/AdminEventForm';
 import RequireAuth from './components/admin/RequireAuth';
+import RouteScrollToTop from './components/common/RouteScrollToTop';
 
 export default function App() {
   return (
     <BrowserRouter>
+      <RouteScrollToTop />
       <Navbar />
       <main className="pt-24">
         <Routes>

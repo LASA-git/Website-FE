@@ -113,7 +113,7 @@ export default function EventDetails() {
             <div className="space-y-6">
               <div>
                 <h2 className="text-lg font-semibold text-lasa-600">About this event</h2>
-                <p className="mt-3 text-sm leading-relaxed text-lasa-500">
+                <p className="mt-3 text-sm leading-relaxed text-lasa-500 whitespace-pre-wrap break-words">
                   {event.description || 'More details will be shared soon.'}
                 </p>
               </div>

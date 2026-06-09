@@ -77,7 +77,7 @@ export default function EventModal({ event, onClose }) {
             )}
           </div>
           {event.description ? (
-            <p className="text-sm leading-relaxed text-lasa-500">{event.description}</p>
+            <p className="text-sm leading-relaxed text-lasa-500 whitespace-pre-wrap break-words">{event.description}</p>
           ) : (
             <p className="text-sm text-lasa-500">No description provided yet.</p>
           )}

@@ -15,7 +15,7 @@ export default function EventCard({ event, actions, onClick, to }) {
   const cover = event.coverImageUrl || event.flyerUrl || event.gallery?.[0];
   const isClickable = Boolean(onClick || to);
   const isButton = Boolean(onClick) && !to;
-  const descriptionText = event.description ? event.description.trim() : '';
+  const descriptionText = event.description || '';
 
   const handleKeyDown = (evt) => {
     if (!isClickable) return;
@@ -75,7 +75,7 @@ export default function EventCard({ event, actions, onClick, to }) {
           )}
         </div>
         {descriptionText && (
-          <p className="text-sm text-lasa-500 leading-relaxed" style={lineClampThree}>
+          <p className="text-sm text-lasa-500 leading-relaxed whitespace-pre-line" style={lineClampThree}>
             {descriptionText}
           </p>
         )}
