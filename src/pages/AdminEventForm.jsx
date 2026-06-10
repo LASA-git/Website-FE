@@ -17,6 +17,7 @@ const INITIAL_STATE = {
   description: '',
   location: '',
   startDate: '',
+  registrationLink: '',
   coverImageUrl: '',
   gallery: [],
   flyerUrl: '',
@@ -80,6 +81,7 @@ export default function AdminEventForm() {
         description: formState.description,
         location: formState.location,
         startDate: formState.startDate,
+        registrationLink: formState.registrationLink,
         coverImageUrl: formState.coverImageUrl,
         gallery: formState.gallery,
         flyerUrl: formState.flyerUrl,
@@ -246,6 +248,17 @@ export default function AdminEventForm() {
                   value={formState.description}
                   onChange={handleChange}
                   rows={5}
+                  className="mt-2 w-full rounded-xl border border-lasa-200 px-4 py-3 text-sm text-lasa-600 focus:border-lasa-500 focus:outline-none focus:ring-2 focus:ring-lasa-200"
+                />
+              </Field>
+
+              <Field label="Event Registration Link">
+                <input
+                  type="url"
+                  name="registrationLink"
+                  value={formState.registrationLink || ''}
+                  onChange={handleChange}
+                  placeholder="https://example.com/register"
                   className="mt-2 w-full rounded-xl border border-lasa-200 px-4 py-3 text-sm text-lasa-600 focus:border-lasa-500 focus:outline-none focus:ring-2 focus:ring-lasa-200"
                 />
               </Field>

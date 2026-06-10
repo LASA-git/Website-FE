@@ -3,13 +3,24 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchEventById } from '../api/events';
 import LoadingState from '../components/common/LoadingState';
 import ErrorState from '../components/common/ErrorState';
+import { CONTACT } from '../constants/contact';
 import { formatEventDate } from '../utils/dateDisplay';
+import { shareEvent } from '../utils/shareEvent';
 
 export default function EventDetails() {
+  const registerActionClass =
+    'inline-flex items-center rounded-lg bg-lasa-600 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white transition-colors hover:bg-lasa-700';
+  const detailActionClass =
+    'inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-lg border border-lasa-200 bg-white px-3 text-sm font-semibold text-lasa-600 transition-colors hover:bg-lasa-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lasa-300';
+  const detailPrimaryActionClass =
+    'inline-flex h-10 w-full items-center justify-center gap-1.5 rounded-lg bg-lasa-600 px-3 text-sm font-semibold text-white transition-colors hover:bg-lasa-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lasa-300';
+
   const { eventId } = useParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sharing, setSharing] = useState(false);
+  const [shareMessage, setShareMessage] = useState('');
 
   useEffect(() => {
     let isMounted = true;
@@ -36,6 +47,32 @@ export default function EventDetails() {
 
   const gallery = useMemo(() => event?.gallery || [], [event]);
   const heroImage = event?.coverImageUrl || event?.flyerUrl || gallery[0];
+
+  const handleShare = async () => {
+    if (!event) return;
+
+    setSharing(true);
+    setShareMessage('');
+    try {
+      const shareResult = await shareEvent({
+        title: event.title || 'LASA Event',
+        text: event.description
+          ? event.description.slice(0, 180)
+          : 'Join this LASA event and be part of community service.',
+        url: window.location.href,
+      });
+
+      if (shareResult === 'copied') {
+        setShareMessage('Event link copied to clipboard.');
+      }
+    } catch (err) {
+      if (err?.name !== 'AbortError') {
+        setShareMessage('Unable to share right now. Please copy the URL from your browser.');
+      }
+    } finally {
+      setSharing(false);
+    }
+  };
 
   if (loading) {
     return <LoadingState message="Loading event..." />;
@@ -125,12 +162,71 @@ export default function EventDetails() {
 
             <aside className="space-y-4">
               <div className="rounded-2xl border border-lasa-200 bg-lasa-50 px-4 py-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-lasa-400">Schedule</p>
+                <div className="flex items-start justify-between gap-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-lasa-400">Schedule</p>
+                  {event.registrationLink && (
+                    <a
+                      href={event.registrationLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={registerActionClass}
+                    >
+                      Register now
+                    </a>
+                  )}
+                </div>
                 <p className="mt-2 text-sm font-semibold text-lasa-600">
                   {formatEventDate(event.startDate, { variant: 'full' })}
                 </p>
                 {event.location && (
                   <p className="mt-2 text-sm text-lasa-500">{event.location}</p>
+                )}
+              </div>
+
+              <div className="rounded-2xl border border-lasa-200 bg-lasa-50 px-4 py-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-lasa-400">Contact Us</p>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <a
+                    href={CONTACT.phoneHref}
+                    className={detailActionClass}
+                  >
+                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    Call us
+                  </a>
+                  <a
+                    href={CONTACT.emailHref}
+                    className={detailActionClass}
+                  >
+                    <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Email us
+                  </a>
+                </div>
+                <Link
+                  to="/contact"
+                  className={`mt-2 ${detailPrimaryActionClass}`}
+                >
+                  Contact page
+                </Link>
+              </div>
+
+              <div className="rounded-2xl border border-lasa-200 bg-lasa-50 px-4 py-4">
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  disabled={sharing}
+                  className={`${detailActionClass} disabled:cursor-not-allowed disabled:opacity-60`}
+                >
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C9.886 12.588 11.304 12 12.75 12c2.426 0 4.774 1.328 6.75 3.75m-10.816-2.408C7.41 14.145 6.25 15.436 5.25 17.25M4.5 4.5h15v15h-15v-15z" />
+                  </svg>
+                  {sharing ? 'Sharing...' : 'Share event'}
+                </button>
+                {shareMessage && (
+                  <p className="mt-2 text-xs text-lasa-500">{shareMessage}</p>
                 )}
               </div>
 

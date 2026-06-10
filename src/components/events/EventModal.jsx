@@ -1,7 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { CONTACT } from '../../constants/contact';
 import { formatEventDate } from '../../utils/dateDisplay';
+import { shareEvent } from '../../utils/shareEvent';
 
 export default function EventModal({ event, onClose }) {
+  const [sharing, setSharing] = useState(false);
+  const [shareMessage, setShareMessage] = useState('');
+
   useEffect(() => {
     if (!event) return undefined;
     const handleKey = (evt) => {
@@ -14,6 +20,35 @@ export default function EventModal({ event, onClose }) {
   if (!event) return null;
 
   const image = event.coverImageUrl || event.flyerUrl || event.gallery?.[0];
+
+  const handleShare = async () => {
+    const eventId = event._id || event.id;
+    const eventUrl = eventId
+      ? `${window.location.origin}/events/${eventId}`
+      : window.location.href;
+
+    setSharing(true);
+    setShareMessage('');
+    try {
+      const shareResult = await shareEvent({
+        title: event.title || 'LASA Event',
+        text: event.description
+          ? event.description.slice(0, 180)
+          : 'Join this LASA event and be part of community service.',
+        url: eventUrl,
+      });
+
+      if (shareResult === 'copied') {
+        setShareMessage('Event link copied to clipboard.');
+      }
+    } catch (err) {
+      if (err?.name !== 'AbortError') {
+        setShareMessage('Unable to share right now. Please copy the URL from your browser.');
+      }
+    } finally {
+      setSharing(false);
+    }
+  };
 
   return (
     <div
@@ -47,18 +82,32 @@ export default function EventModal({ event, onClose }) {
         </div>
 
         {image && (
-          <div className="border-b border-lasa-200 bg-lasa-50">
-            <img
-              src={image}
-              alt={event.title}
-              className="h-auto max-h-[70vh] w-full object-contain"
-            />
+          <div className="border-b border-lasa-200 bg-lasa-50 p-3 sm:p-4">
+            <div className="mx-auto overflow-hidden rounded-xl border border-lasa-200 bg-white" style={{ aspectRatio: '4 / 3' }}>
+              <img
+                src={image}
+                alt={event.title}
+                className="h-full w-full object-contain"
+              />
+            </div>
           </div>
         )}
 
         <div className="space-y-4 px-6 py-5">
           <div className="rounded-xl border border-lasa-200 bg-lasa-50 px-4 py-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-lasa-400">Schedule</p>
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-lasa-400">Schedule</p>
+              {event.registrationLink && (
+                <a
+                  href={event.registrationLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center rounded-lg bg-lasa-600 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-white hover:bg-lasa-700"
+                >
+                  Register now
+                </a>
+              )}
+            </div>
             <p className="mt-1 text-sm font-semibold text-lasa-600">
               {formatEventDate(event.startDate, { variant: 'long' })}
             </p>
@@ -66,6 +115,40 @@ export default function EventModal({ event, onClose }) {
               <p className="mt-1 text-sm text-lasa-500">{event.location}</p>
             )}
           </div>
+
+          <div className="grid gap-2 md:grid-cols-2">
+            <a
+              href={CONTACT.phoneHref}
+              className="inline-flex items-center justify-center rounded-lg border border-lasa-200 bg-white px-4 py-2 text-sm font-semibold text-lasa-600 hover:bg-lasa-100"
+            >
+              Call us
+            </a>
+            <a
+              href={CONTACT.emailHref}
+              className="inline-flex items-center justify-center rounded-lg border border-lasa-200 bg-white px-4 py-2 text-sm font-semibold text-lasa-600 hover:bg-lasa-100"
+            >
+              Email us
+            </a>
+            <Link
+              to="/contact"
+              className="inline-flex items-center justify-center rounded-lg border border-lasa-200 bg-lasa-50 px-4 py-2 text-sm font-semibold text-lasa-600 hover:bg-lasa-100"
+            >
+              Contact page
+            </Link>
+            <button
+              type="button"
+              onClick={handleShare}
+              disabled={sharing}
+              className="inline-flex items-center justify-center rounded-lg border border-lasa-200 bg-white px-4 py-2 text-sm font-semibold text-lasa-600 hover:bg-lasa-100 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {sharing ? 'Sharing...' : 'Share event'}
+            </button>
+          </div>
+
+          {shareMessage && (
+            <p className="text-xs text-lasa-500">{shareMessage}</p>
+          )}
+
           {event.description ? (
             <p className="text-sm leading-relaxed text-lasa-500 whitespace-pre-wrap break-words">{event.description}</p>
           ) : (
