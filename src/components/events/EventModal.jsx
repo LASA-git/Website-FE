@@ -1,15 +1,5 @@
 import { useEffect } from 'react';
-
-function formatDate(dateValue) {
-  if (!dateValue) return 'Date TBA';
-  const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) return 'Date TBA';
-  return date.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
+import { formatEventDate } from '../../utils/dateDisplay';
 
 export default function EventModal({ event, onClose }) {
   useEffect(() => {
@@ -37,7 +27,7 @@ export default function EventModal({ event, onClose }) {
         <div className="sticky top-0 z-10 flex items-center justify-between border-b border-lasa-200 bg-white px-6 py-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-lasa-400">
-              {formatDate(event.startDate)}
+              {formatEventDate(event.startDate, { variant: 'long' })}
             </p>
             <h2 className="mt-1 text-xl font-semibold text-lasa-600">{event.title}</h2>
             {event.location && (
@@ -70,7 +60,7 @@ export default function EventModal({ event, onClose }) {
           <div className="rounded-xl border border-lasa-200 bg-lasa-50 px-4 py-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-lasa-400">Schedule</p>
             <p className="mt-1 text-sm font-semibold text-lasa-600">
-              {formatDate(event.startDate)}
+              {formatEventDate(event.startDate, { variant: 'long' })}
             </p>
             {event.location && (
               <p className="mt-1 text-sm text-lasa-500">{event.location}</p>

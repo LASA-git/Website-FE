@@ -3,18 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { fetchEventById } from '../api/events';
 import LoadingState from '../components/common/LoadingState';
 import ErrorState from '../components/common/ErrorState';
-
-function formatDate(dateValue) {
-  if (!dateValue) return 'Date TBA';
-  const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) return 'Date TBA';
-  return date.toLocaleDateString(undefined, {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
+import { formatEventDate } from '../utils/dateDisplay';
 
 export default function EventDetails() {
   const { eventId } = useParams();
@@ -87,7 +76,7 @@ export default function EventDetails() {
         <div className="mt-6 overflow-hidden rounded-3xl border border-lasa-200 bg-white shadow-lg">
           <div className="border-b border-lasa-200 bg-lasa-50/80 px-4 py-5 sm:px-6 sm:py-6">
             <p className="text-xs font-semibold uppercase tracking-wide text-lasa-400">
-              {formatDate(event.startDate)}
+              {formatEventDate(event.startDate, { variant: 'full' })}
             </p>
             <h1 className="mt-2 text-2xl font-semibold text-lasa-700 sm:text-3xl">
               {event.title}
@@ -138,7 +127,7 @@ export default function EventDetails() {
               <div className="rounded-2xl border border-lasa-200 bg-lasa-50 px-4 py-4">
                 <p className="text-xs font-semibold uppercase tracking-wide text-lasa-400">Schedule</p>
                 <p className="mt-2 text-sm font-semibold text-lasa-600">
-                  {formatDate(event.startDate)}
+                  {formatEventDate(event.startDate, { variant: 'full' })}
                 </p>
                 {event.location && (
                   <p className="mt-2 text-sm text-lasa-500">{event.location}</p>

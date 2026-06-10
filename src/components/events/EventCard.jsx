@@ -1,15 +1,5 @@
 import { Link } from 'react-router-dom';
-
-function formatDate(dateValue) {
-  if (!dateValue) return 'Date TBA';
-  const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) return 'Date TBA';
-  return date.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-}
+import { formatEventDate } from '../../utils/dateDisplay';
 
 export default function EventCard({ event, actions, onClick, to }) {
   const cover = event.coverImageUrl || event.flyerUrl || event.gallery?.[0];
@@ -65,7 +55,7 @@ export default function EventCard({ event, actions, onClick, to }) {
       <div className="flex flex-1 flex-col gap-3 p-4 sm:p-5">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-lasa-400">
-            {formatDate(event.startDate)}
+            {formatEventDate(event.startDate, { variant: 'short' })}
           </p>
           <h3 className="mt-2 break-words text-base font-semibold text-lasa-600 sm:text-lg" style={lineClampTwo}>
             {event.title}
