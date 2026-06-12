@@ -65,16 +65,16 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
         <div className="flex items-center h-20 sm:h-24">
           {/* Logo */}
-          <Link to="/" className="flex flex-shrink-0 items-center gap-3 sm:gap-4">
+          <Link to="/" className="flex min-w-0 flex-shrink items-center gap-2 sm:gap-4">
             <img
               src="/finallogo.png"
               alt="LASA Foundation"
-              className="h-16 w-auto sm:h-[4.5rem]"
+              className="h-14 w-auto flex-shrink-0 sm:h-[4.5rem]"
             />
             <img
               src="/write.jpeg"
               alt="LASA Foundation — Love All, Serve All"
-              className="h-10 w-auto sm:h-11"
+              className="h-8 w-auto max-w-[42vw] object-contain sm:h-11 sm:max-w-none"
             />
           </Link>
 

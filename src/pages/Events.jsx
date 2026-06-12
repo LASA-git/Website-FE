@@ -245,20 +245,18 @@ export default function Events() {
                 const title = getEventTitle(event);
                 const eventDate = normalizeDate(event);
                 const image = getEventImage(event);
-                const description = event.description || 'More details will be shared soon.';
-                const descriptionWords = description.replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
-                const descriptionPreview = descriptionWords.length > 7
-                  ? `${descriptionWords.slice(0, 7).join(' ')} . . .`
-                  : descriptionWords.join(' ');
-                const galleryCount = Array.isArray(event.gallery) ? event.gallery.length : 0;
+                const titleWords = title.replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+                const titlePreview = titleWords.length > 7
+                  ? `${titleWords.slice(0, 7).join(' ')} . . .`
+                  : titleWords.join(' ');
                 const eventYear = eventDate ? new Date(eventDate).getFullYear() : null;
 
                 return (
                   <article
                     key={eventId}
-                    className="flex h-[22.5rem] flex-col overflow-hidden rounded-2xl border border-lasa-200 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                    className="flex h-[18rem] md:h-[18.75rem] flex-col overflow-hidden rounded-2xl border border-lasa-200 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                   >
-                    <div className="relative h-44 overflow-hidden md:h-48">
+                    <div className="relative h-40 overflow-hidden md:h-44">
                       {image ? (
                         <img
                           src={image}
@@ -269,20 +267,6 @@ export default function Events() {
                       ) : (
                         <div className="flex h-full items-center justify-center bg-gray-100 text-sm text-gray-400">No image available</div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-lasa-900/70 to-transparent" />
-                      <div className="absolute bottom-4 left-4 right-4">
-                        <h2
-                          className="text-lg font-semibold text-white"
-                          style={{
-                            display: '-webkit-box',
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          {title}
-                        </h2>
-                      </div>
                       {eventYear && (
                         <div className="absolute right-4 top-4 rounded-full bg-black/60 px-2 py-1 text-xs font-semibold text-white">
                           {eventYear}
@@ -290,38 +274,28 @@ export default function Events() {
                       )}
                     </div>
 
-                    <div className="flex flex-1 flex-col p-4 md:p-5">
-                      <p
-                        className="mb-3 min-h-[1.5rem] text-sm leading-6 text-lasa-600"
-                      >
-                        {descriptionPreview}
-                      </p>
-
-                      <div className="mb-3">
-                        <div className="flex items-center text-sm text-lasa-500">
+                    <div className="flex flex-1 flex-col p-3.5 md:p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex min-h-[1.5rem] items-center text-sm font-extrabold text-lasa-600">
                           <svg className="mr-2 h-4 w-4 text-lasa-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M8 2v4M16 2v4M3 10h18M5 6h14a2 2 0 012 2v11a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z" />
                           </svg>
                           {formatEventDate(eventDate, { variant: 'short' })}
                         </div>
-                      </div>
-
-                      <div className="mt-auto flex items-center justify-between gap-3 border-t border-lasa-100 pt-3">
-                        <div className="text-sm text-lasa-500">
-                          {galleryCount} photo{galleryCount === 1 ? '' : 's'}
-                        </div>
                         <Link
                           to={`/events/${eventId}`}
-                          className="inline-flex h-10 min-w-[150px] items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-lasa-600 px-4 py-2 text-sm font-semibold text-white transition-colors duration-300 hover:bg-lasa-700 focus:outline-none focus:ring-2 focus:ring-lasa-500 focus:ring-offset-2"
+                          className="inline-flex h-8 shrink-0 items-center justify-center rounded-md bg-lasa-600 px-3 text-xs font-semibold text-white transition-colors duration-300 hover:bg-lasa-700 focus:outline-none focus:ring-2 focus:ring-lasa-500 focus:ring-offset-2"
                           aria-label={`View details for ${title}`}
                         >
-                          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M1.5 12s3.75-7.5 10.5-7.5S22.5 12 22.5 12s-3.75 7.5-10.5 7.5S1.5 12 1.5 12z" />
-                            <circle cx="12" cy="12" r="3" />
-                          </svg>
                           View Details
                         </Link>
                       </div>
+
+                      <p
+                        className="mt-2 min-h-[2.5rem] text-sm font-extrabold leading-5 text-lasa-600"
+                      >
+                        {titlePreview}
+                      </p>
                     </div>
                   </article>
                 );

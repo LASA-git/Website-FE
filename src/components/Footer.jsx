@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { NAV_LINKS } from '../constants/navLinks';
 import logoEmblem from '/finallogo.png';
+import logoWrite from '/write.jpeg';
 
 export default function Footer() {
   return (
@@ -8,9 +9,14 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 lg:gap-16 mb-12">
           {/* Logo & Intro */}
-          <div className="flex flex-col items-start text-left">
-            <Link to="/">
-              <img src={logoEmblem} alt="LASA Foundation Logo" className="w-40 mb-4" />
+          <div className="flex flex-col items-start text-left min-w-0">
+            <Link to="/" className="inline-flex w-full max-w-full items-center gap-2 sm:gap-3 mb-4 min-w-0">
+              <img src={logoEmblem} alt="LASA Foundation Logo" className="h-20 w-auto flex-shrink-0 sm:h-24" />
+              <img
+                src={logoWrite}
+                alt="LASA Foundation - Love All, Serve All"
+                className="h-8 w-auto max-w-[50vw] object-contain sm:h-11 sm:max-w-none"
+              />
             </Link>
             <p className="text-lasa-500 text-sm leading-relaxed max-w-xs">
               A charitable organization dedicated to community service based on Truth, Non-violence, Peace, Love, and Right Conduct.
