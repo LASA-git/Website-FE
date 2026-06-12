@@ -63,18 +63,18 @@ export default function Navbar() {
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
-        <div className="flex items-center h-28 sm:h-32">
+        <div className="flex items-center h-20 sm:h-24">
           {/* Logo */}
           <Link to="/" className="flex flex-shrink-0 items-center gap-3 sm:gap-4">
             <img
               src="/finallogo.png"
               alt="LASA Foundation"
-              className="h-20 w-auto sm:h-24"
+              className="h-16 w-auto sm:h-[4.5rem]"
             />
             <img
               src="/write.jpeg"
               alt="LASA Foundation — Love All, Serve All"
-              className="h-12 w-auto sm:h-14"
+              className="h-10 w-auto sm:h-11"
             />
           </Link>
 
@@ -88,7 +88,7 @@ export default function Navbar() {
           {/* Mobile hamburger */}
           <button
             type="button"
-            className="ml-auto lg:hidden p-2 rounded-md text-lasa-500 hover:bg-lasa-200 transition-colors"
+            className="ml-auto lg:hidden p-1.5 rounded-md text-lasa-500 hover:bg-lasa-200 transition-colors"
             onClick={() => setMobileOpen((prev) => !prev)}
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}

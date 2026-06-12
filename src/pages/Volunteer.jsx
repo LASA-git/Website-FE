@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { fetchActiveEvents } from '../api/events';
 import { createVolunteer } from '../api/volunteers';
-import LoadingState from '../components/common/LoadingState';
 import ErrorState from '../components/common/ErrorState';
 
 const INITIAL_FORM = {
@@ -22,6 +21,7 @@ export default function Volunteer() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [isInterestsOpen, setIsInterestsOpen] = useState(false);
+  const interestsPanelRef = useRef(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -59,9 +59,33 @@ export default function Volunteer() {
 
   const selectedLabel = useMemo(() => {
     if (!selectedInterests.length) return 'Select interests';
-    if (selectedInterests.length === 1) return selectedInterests[0];
+    if (selectedInterests.length <= 2) return selectedInterests.join(', ');
     return `${selectedInterests.length} interests selected`;
   }, [selectedInterests]);
+
+  useEffect(() => {
+    if (!isInterestsOpen) return undefined;
+
+    const handleClickOutside = (event) => {
+      if (!interestsPanelRef.current?.contains(event.target)) {
+        setIsInterestsOpen(false);
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') {
+        setIsInterestsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscape);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isInterestsOpen]);
 
   const handleFieldChange = (event) => {
     const { name, value } = event.target;
@@ -82,6 +106,7 @@ export default function Volunteer() {
     setSelectedInterests([]);
     setSubmitError(null);
     setSubmitSuccess(false);
+    setIsInterestsOpen(false);
   };
 
   const handleSubmit = async (event) => {
@@ -117,6 +142,7 @@ export default function Volunteer() {
       setSubmitSuccess(true);
       setFormState(INITIAL_FORM);
       setSelectedInterests([]);
+      setIsInterestsOpen(false);
     } catch (err) {
       setSubmitError(err?.message || 'Unable to submit your volunteer details.');
     } finally {
@@ -124,113 +150,129 @@ export default function Volunteer() {
     }
   };
 
+  const fieldClassName =
+    'mt-2 h-11 w-full rounded-xl border border-lasa-200 bg-white px-3.5 text-sm text-lasa-700 placeholder:text-lasa-300 transition focus:border-lasa-500 focus:outline-none focus:ring-2 focus:ring-lasa-200';
+
   return (
-    <section className="bg-lasa-50 py-10 sm:py-12">
+    <section className="py-12 sm:py-14">
       <div className="mx-auto w-full max-w-4xl px-4 sm:px-6">
         <div className="text-center">
-          <h1 className="text-3xl font-semibold text-lasa-600">Volunteer With LASA</h1>
-          <p className="mt-3 text-sm text-lasa-500">
+          <h1 className="text-3xl font-semibold tracking-tight text-lasa-700 sm:text-4xl">
+            Volunteer With LASA
+          </h1>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-lasa-500 sm:text-base">
             Share your details and tell us which events you would like to support.
           </p>
         </div>
 
-        <div className="mt-8 rounded-3xl border border-lasa-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="mt-8 rounded-[2rem] border border-lasa-200/80 bg-white/95 p-6 shadow-[0_22px_48px_-34px_rgba(30,58,52,0.55)] sm:p-8">
           {submitSuccess ? (
             <div className="space-y-4 text-center">
-              <h2 className="text-2xl font-semibold text-lasa-600">Thank you for volunteering!</h2>
-              <p className="text-sm text-lasa-500">
+              <h2 className="text-2xl font-semibold text-lasa-700">Thank you for volunteering!</h2>
+              <p className="text-sm text-lasa-500 sm:text-base">
                 We have received your details and will reach out soon.
               </p>
               <button
                 type="button"
                 onClick={resetForm}
-                className="inline-flex items-center justify-center rounded-xl bg-lasa-600 px-6 py-3 text-sm font-semibold text-white hover:bg-lasa-700"
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-lasa-600 px-6 text-sm font-semibold text-white transition hover:bg-lasa-700"
               >
                 Submit another response
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-7">
               {submitError && <ErrorState message={submitError} />}
 
-              <div className="grid gap-6 md:grid-cols-2">
-                <Field label="Full name" required>
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formState.fullName}
-                    onChange={handleFieldChange}
-                    required
-                    className="mt-2 w-full rounded-xl border border-lasa-200 px-4 py-3 text-sm text-lasa-600 focus:border-lasa-500 focus:outline-none focus:ring-2 focus:ring-lasa-200"
-                  />
-                </Field>
+              <div className="space-y-4">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-lasa-500">
+                  Personal Details
+                </h2>
+                <div className="grid gap-4 md:grid-cols-12">
+                  <Field label="Full name" required className="md:col-span-9">
+                    <input
+                      type="text"
+                      name="fullName"
+                      value={formState.fullName}
+                      onChange={handleFieldChange}
+                      required
+                      className={fieldClassName}
+                    />
+                  </Field>
 
-                <Field label="Age" required>
-                  <input
-                    type="number"
-                    name="age"
-                    min="1"
-                    value={formState.age}
-                    onChange={handleFieldChange}
-                    required
-                    className="mt-2 w-full rounded-xl border border-lasa-200 px-4 py-3 text-sm text-lasa-600 focus:border-lasa-500 focus:outline-none focus:ring-2 focus:ring-lasa-200"
-                  />
-                </Field>
+                  <Field label="Age" required className="md:col-span-3">
+                    <input
+                      type="number"
+                      name="age"
+                      min="1"
+                      max="120"
+                      value={formState.age}
+                      onChange={handleFieldChange}
+                      required
+                      className={fieldClassName}
+                    />
+                  </Field>
 
-                <Field label="Gender" required>
-                  <select
-                    name="gender"
-                    value={formState.gender}
-                    onChange={handleFieldChange}
-                    required
-                    className="mt-2 w-full rounded-xl border border-lasa-200 bg-white px-4 py-3 text-sm text-lasa-600 focus:border-lasa-500 focus:outline-none focus:ring-2 focus:ring-lasa-200"
-                  >
-                    <option value="" disabled>
-                      Select
-                    </option>
-                    <option value="Female">Female</option>
-                    <option value="Male">Male</option>
-                    <option value="Non-binary">Non-binary</option>
-                    <option value="Prefer not to say">Prefer not to say</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </Field>
+                  <Field label="Gender" required className="md:col-span-5">
+                    <select
+                      name="gender"
+                      value={formState.gender}
+                      onChange={handleFieldChange}
+                      required
+                      className={fieldClassName}
+                    >
+                      <option value="" disabled>
+                        Select
+                      </option>
+                      <option value="Female">Female</option>
+                      <option value="Male">Male</option>
+                      <option value="Non-binary">Non-binary</option>
+                      <option value="Prefer not to say">Prefer not to say</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </Field>
 
-                <Field label="Phone">
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formState.phone}
-                    onChange={handleFieldChange}
-                    placeholder="(555) 123-4567"
-                    className="mt-2 w-full rounded-xl border border-lasa-200 px-4 py-3 text-sm text-lasa-600 focus:border-lasa-500 focus:outline-none focus:ring-2 focus:ring-lasa-200"
-                  />
-                </Field>
+                  <Field label="Phone" className="md:col-span-7">
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formState.phone}
+                      onChange={handleFieldChange}
+                      placeholder="(555) 123-4567"
+                      className={fieldClassName}
+                    />
+                  </Field>
 
-                <Field label="Email" className="md:col-span-2">
-                  <input
-                    type="email"
-                    name="email"
-                    value={formState.email}
-                    onChange={handleFieldChange}
-                    placeholder="you@example.com"
-                    className="mt-2 w-full rounded-xl border border-lasa-200 px-4 py-3 text-sm text-lasa-600 focus:border-lasa-500 focus:outline-none focus:ring-2 focus:ring-lasa-200"
-                  />
-                </Field>
+                  <Field label="Email" className="md:col-span-12">
+                    <input
+                      type="email"
+                      name="email"
+                      value={formState.email}
+                      onChange={handleFieldChange}
+                      placeholder="you@example.com"
+                      className={fieldClassName}
+                    />
+                  </Field>
+                </div>
               </div>
 
-              <div>
+              <div className="space-y-4">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-lasa-500">
+                  Ways You Want To Help
+                </h2>
                 <Field label="Interests" required>
-                  <div className="relative mt-2">
+                  <div className="relative mt-2" ref={interestsPanelRef}>
                     <button
                       type="button"
                       onClick={() => setIsInterestsOpen((prev) => !prev)}
-                      className="flex w-full items-center justify-between rounded-xl border border-lasa-200 bg-white px-4 py-3 text-sm text-lasa-600 focus:border-lasa-500 focus:outline-none focus:ring-2 focus:ring-lasa-200"
+                      className={`${fieldClassName} flex items-center justify-between text-left`}
                       aria-expanded={isInterestsOpen}
+                      aria-haspopup="listbox"
+                      aria-controls="volunteer-interests-list"
                     >
-                      <span>{selectedLabel}</span>
+                      <span className="truncate pr-2">{selectedLabel}</span>
                       <svg
-                        className={`h-4 w-4 transition-transform ${isInterestsOpen ? 'rotate-180' : ''}`}
+                        className={`h-4 w-4 shrink-0 transition-transform ${isInterestsOpen ? 'rotate-180' : ''}`}
                         viewBox="0 0 20 20"
                         fill="none"
                         stroke="currentColor"
@@ -241,40 +283,86 @@ export default function Volunteer() {
                     </button>
 
                     {isInterestsOpen && (
-                      <div className="absolute z-10 mt-2 w-full rounded-xl border border-lasa-200 bg-white p-4 shadow-lg">
-                        {loadingEvents && <LoadingState message="Loading active events..." />}
-                        {!loadingEvents && eventsError && <ErrorState message={eventsError} />}
-                        {!loadingEvents && (
-                          <div className="space-y-3">
-                            {interestOptions.map((option) => (
-                              <label key={option} className="flex items-center gap-3 text-sm text-lasa-600">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedInterests.includes(option)}
-                                  onChange={() => toggleInterest(option)}
-                                  className="h-4 w-4 rounded border-lasa-300 text-lasa-600 focus:ring-lasa-200"
-                                />
-                                <span>{option}</span>
-                              </label>
-                            ))}
-                            {interestOptions.length === 1 && (
-                              <p className="text-sm text-lasa-500">No active events right now.</p>
-                            )}
-                          </div>
-                        )}
+                      <div
+                        id="volunteer-interests-list"
+                        role="listbox"
+                        className="absolute z-20 mt-2 w-full overflow-hidden rounded-2xl border border-lasa-200 bg-white shadow-xl shadow-lasa-700/10"
+                      >
+                        <div className="max-h-64 overflow-y-auto p-3">
+                          {loadingEvents && (
+                            <div className="flex items-center gap-3 py-2 text-sm text-lasa-500">
+                              <span className="h-4 w-4 animate-spin rounded-full border-2 border-lasa-200 border-t-lasa-600" />
+                              <span>Loading active events...</span>
+                            </div>
+                          )}
+
+                          {!loadingEvents && eventsError && (
+                            <div className="rounded-xl border border-red-200 bg-red-50/80 px-3 py-2 text-sm text-red-700">
+                              {eventsError}
+                            </div>
+                          )}
+
+                          {!loadingEvents && !eventsError && (
+                            <div className="space-y-1">
+                              {interestOptions.map((option) => {
+                                const isChecked = selectedInterests.includes(option);
+                                return (
+                                  <label
+                                    key={option}
+                                    className="flex cursor-pointer items-center gap-3 rounded-xl px-2 py-2 text-sm text-lasa-700 transition hover:bg-lasa-50"
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={isChecked}
+                                      onChange={() => toggleInterest(option)}
+                                      className="h-4 w-4 rounded border-lasa-300 text-lasa-600 focus:ring-lasa-200"
+                                    />
+                                    <span>{option}</span>
+                                  </label>
+                                );
+                              })}
+                              {interestOptions.length === 1 && (
+                                <p className="px-2 py-1 text-sm text-lasa-500">No active events right now.</p>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
+
+                  {selectedInterests.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {selectedInterests.map((interest) => (
+                        <button
+                          key={interest}
+                          type="button"
+                          onClick={() => toggleInterest(interest)}
+                          className="inline-flex items-center gap-2 rounded-full border border-lasa-200 bg-lasa-50 px-3 py-1 text-xs font-semibold text-lasa-700 transition hover:border-lasa-300 hover:bg-lasa-100"
+                        >
+                          <span>{interest}</span>
+                          <span aria-hidden>&times;</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
                   <p className="mt-2 text-xs text-lasa-500">
                     Select "General" for ongoing volunteering, plus any current events.
                   </p>
                 </Field>
               </div>
 
+              <div className="rounded-2xl border border-lasa-200/90 bg-lasa-50/70 p-4">
+                <p className="text-xs text-lasa-600">
+                  We only use these details to contact you about volunteering opportunities.
+                </p>
+              </div>
+
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex w-full items-center justify-center rounded-xl bg-lasa-600 px-6 py-3 text-sm font-semibold text-white hover:bg-lasa-700 disabled:cursor-not-allowed disabled:opacity-70"
+                className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-lasa-600 px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-lasa-700 disabled:cursor-not-allowed disabled:opacity-70"
               >
                 {submitting ? 'Submitting...' : 'Submit volunteer form'}
               </button>
@@ -288,9 +376,10 @@ export default function Volunteer() {
 
 function Field({ label, required, children, className }) {
   return (
-    <label className={`block text-sm font-semibold text-lasa-600 ${className || ''}`.trim()}>
+    <label className={`block text-sm font-medium text-lasa-700 ${className || ''}`.trim()}>
       <span>
-        {label}{required && <span className="text-red-500"> *</span>}
+        {label}
+        {required && <span className="text-red-500"> *</span>}
       </span>
       {children}
     </label>

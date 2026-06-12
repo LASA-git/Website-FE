@@ -56,11 +56,6 @@ export default function Home() {
                 className="mt-6 w-full max-w-[22rem] h-auto"
               />
 
-              <div className="mt-7 flex flex-wrap justify-center gap-2.5 text-center text-xs font-semibold uppercase text-lasa-500">
-                <span className="rounded-full border border-lasa-200 bg-lasa-50 px-3 py-1">Truth</span>
-                <span className="rounded-full border border-lasa-200 bg-lasa-50 px-3 py-1">Peace</span>
-                <span className="rounded-full border border-lasa-200 bg-lasa-50 px-3 py-1">Love</span>
-              </div>
             </div>
           </div>
         </div>

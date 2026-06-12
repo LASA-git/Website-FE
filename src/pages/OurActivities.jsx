@@ -4,13 +4,13 @@ import { revealDelay } from '../constants/motion';
 
 const ACTIVITY_TRACKS = [
   {
-    label: 'Educare',
-    title: 'Character-centered learning and family empowerment',
+    label: 'Healthcare',
+    title: 'Barrier-free wellness for vulnerable communities',
     highlights: [
-      'Tutoring, life skills, and value-based learning experiences that help children and families build resilience for the long term.',
+      'Free clinics, preventive care support, and compassionate services that make access to quality healthcare practical and humane.',
     ],
-    route: '/our-activities/educare',
-    accent: 'from-emerald-100 to-lasa-50',
+    route: '/our-activities/healthcare',
+    accent: 'from-teal-100 to-lasa-50',
   },
   {
     label: 'Sociocare',
@@ -22,21 +22,21 @@ const ACTIVITY_TRACKS = [
     accent: 'from-lime-100 to-lasa-50',
   },
   {
-    label: 'Healthcare',
-    title: 'Barrier-free wellness for vulnerable communities',
+    label: 'Educare',
+    title: 'Character-centered learning and family empowerment',
     highlights: [
-      'Free clinics, preventive care support, and compassionate services that make access to quality healthcare practical and humane.',
+      'Tutoring, life skills, and value-based learning experiences that help children and families build resilience for the long term.',
     ],
-    route: '/our-activities/healthcare',
-    accent: 'from-teal-100 to-lasa-50',
+    route: '/our-activities/educare',
+    accent: 'from-emerald-100 to-lasa-50',
   },
 ];
 
-const IMPACT_NUMBERS = [
-  { value: '3', label: 'Core activity tracks' },
-  { value: '100%', label: 'Volunteer-driven delivery' },
-  { value: '1', label: 'Unified mission of service' },
-];
+const TRACK_REVEAL_DELAY = {
+  Healthcare: 0,
+  Sociocare: 180,
+  Educare: 360,
+};
 
 const SERVICE_RHYTHM = [
   {
@@ -79,19 +79,6 @@ export default function OurActivities() {
               </li>
             </ul>
           </ScrollReveal>
-
-          <div className="mt-8 grid gap-3 sm:grid-cols-3 sm:gap-4">
-            {IMPACT_NUMBERS.map((item, index) => (
-              <ScrollReveal key={item.label} delay={revealDelay(index, { base: 280 })} direction="up">
-                <article className="rounded-2xl border border-lasa-200 bg-white/90 p-4 shadow-sm backdrop-blur-sm">
-                  <p className="text-2xl font-semibold text-lasa-700 sm:text-3xl">{item.value}</p>
-                  <p className="mt-1 text-xs font-medium uppercase tracking-wide text-lasa-500">
-                    {item.label}
-                  </p>
-                </article>
-              </ScrollReveal>
-            ))}
-          </div>
         </div>
       </div>
 
@@ -109,44 +96,50 @@ export default function OurActivities() {
         </ScrollReveal>
 
         <div className="mt-6 grid gap-4 lg:grid-cols-3 lg:[grid-auto-rows:1fr]">
-          {ACTIVITY_TRACKS.map((track, index) => (
-            <ScrollReveal
-              key={track.label}
-              delay={revealDelay(index, { base: 130 })}
-              direction={index % 2 === 0 ? 'up' : 'left'}
-            >
-              <article className="uniform-card narrative-card group rounded-3xl border border-lasa-200 bg-white p-6 shadow-[0_20px_40px_-32px_rgba(30,58,52,0.55)] transition-all duration-500 hover:-translate-y-1 hover:border-lasa-300 hover:shadow-lg">
-                <p
-                  className={`reading-kicker inline-flex w-fit rounded-full border border-lasa-200 bg-gradient-to-r px-3 py-1 text-[11px] font-semibold uppercase text-lasa-600 ${track.accent}`}
-                >
-                  {track.label}
-                </p>
-                <h3 className="reading-subtitle mt-4 text-xl font-semibold text-lasa-700">
-                  {track.title}
-                </h3>
-                <ul className="reading-copy-tight mt-3 list-disc space-y-1.5 pl-5 text-[15px] text-lasa-600">
-                  {track.highlights.map((point) => (
-                    <li key={point}>{point}</li>
-                  ))}
-                </ul>
+          {ACTIVITY_TRACKS.map((track, index) => {
+            const revealDelayMs = TRACK_REVEAL_DELAY[track.label] ?? revealDelay(index, { base: 0, step: 180 });
 
-                <Link
-                  to={track.route}
-                  className="mt-6 inline-flex items-center gap-2 rounded-full border border-lasa-300 bg-lasa-50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-lasa-600 transition-all hover:border-lasa-400 hover:bg-lasa-100"
-                >
-                  View Program
-                  <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-              </article>
-            </ScrollReveal>
-          ))}
+            return (
+              <ScrollReveal
+                key={track.label}
+                delay={revealDelayMs}
+                direction="up"
+                threshold={0.12}
+                rootMargin="0px 0px -12% 0px"
+              >
+                <article className="uniform-card narrative-card group rounded-3xl border border-lasa-200 bg-white p-6 shadow-[0_20px_40px_-32px_rgba(30,58,52,0.55)] transition-all duration-500 hover:-translate-y-1 hover:border-lasa-300 hover:shadow-lg">
+                  <p
+                    className={`reading-kicker inline-flex w-fit rounded-full border border-lasa-200 bg-gradient-to-r px-3 py-1 text-[11px] font-semibold uppercase text-lasa-600 ${track.accent}`}
+                  >
+                    {track.label}
+                  </p>
+                  <h3 className="reading-subtitle mt-4 text-xl font-semibold text-lasa-700">
+                    {track.title}
+                  </h3>
+                  <ul className="reading-copy-tight mt-3 list-disc space-y-1.5 pl-5 text-[15px] text-lasa-600">
+                    {track.highlights.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+
+                  <Link
+                    to={track.route}
+                    className="mt-6 inline-flex items-center gap-2 rounded-full border border-lasa-300 bg-lasa-50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-lasa-600 transition-all hover:border-lasa-400 hover:bg-lasa-100"
+                  >
+                    View Program
+                    <svg className="h-4 w-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </article>
+              </ScrollReveal>
+            );
+          })}
         </div>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
-          <ScrollReveal direction="right">
-            <div className="rounded-3xl border border-lasa-200 bg-white p-6 shadow-sm sm:p-8">
+        <div className="mt-10 grid gap-6 lg:grid-cols-[1.2fr_1fr] lg:items-stretch">
+          <ScrollReveal direction="right" className="h-full">
+            <div className="h-full rounded-3xl border border-lasa-200 bg-white p-6 shadow-sm sm:p-8">
               <p className="reading-kicker text-xs font-semibold uppercase text-lasa-500">
                 How We Deliver
               </p>
@@ -188,7 +181,6 @@ export default function OurActivities() {
 
         <ScrollReveal delay={revealDelay(0, { base: 120 })} direction="up">
           <div className="mt-10 rounded-3xl border border-lasa-200 bg-gradient-to-r from-lasa-700 to-lasa-600 p-6 text-white shadow-lg sm:p-8">
-            <p className="reading-kicker text-sm uppercase text-lasa-100">Join the Movement</p>
             <h3 className="reading-title mt-3 text-3xl font-display sm:text-4xl">
               Bring your time, heart, and skills
             </h3>

@@ -46,7 +46,9 @@ export default function EventDetails() {
   }, [eventId]);
 
   const gallery = useMemo(() => event?.gallery || [], [event]);
-  const heroImage = event?.coverImageUrl || event?.flyerUrl || gallery[0];
+  const eventTitle = event?.title || event?.name || 'LASA Event';
+  const eventDateValue = event?.startDate || event?.date;
+  const heroImage = event?.coverImageUrl || gallery[0] || event?.image || event?.flyerUrl;
 
   const handleShare = async () => {
     if (!event) return;
@@ -55,7 +57,7 @@ export default function EventDetails() {
     setShareMessage('');
     try {
       const shareResult = await shareEvent({
-        title: event.title || 'LASA Event',
+        title: eventTitle,
         text: event.description
           ? event.description.slice(0, 180)
           : 'Join this LASA event and be part of community service.',
@@ -111,29 +113,31 @@ export default function EventDetails() {
         </Link>
 
         <div className="mt-6 overflow-hidden rounded-3xl border border-lasa-200 bg-white shadow-lg">
-          <div className="border-b border-lasa-200 bg-lasa-50/80 px-4 py-5 sm:px-6 sm:py-6">
-            <p className="text-xs font-semibold uppercase tracking-wide text-lasa-400">
-              {formatEventDate(event.startDate, { variant: 'full' })}
-            </p>
-            <h1 className="mt-2 text-2xl font-semibold text-lasa-700 sm:text-3xl">
-              {event.title}
-            </h1>
-            {event.location && (
-              <p className="mt-2 text-sm text-lasa-500 sm:text-base">{event.location}</p>
-            )}
-          </div>
-
-          {heroImage && (
-            <div className="bg-lasa-100 p-3 sm:p-4">
-              <div className="mx-auto overflow-hidden rounded-2xl border border-lasa-200 bg-white" style={{ aspectRatio: '4 / 3' }}>
-                <img
-                  src={heroImage}
-                  alt={event.title}
-                  className="h-full w-full object-contain"
-                />
+          <div className="relative h-72 overflow-hidden bg-lasa-100 sm:h-80 md:h-96">
+            {heroImage ? (
+              <img
+                src={heroImage}
+                alt={eventTitle}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-sm text-lasa-500">
+                No image available
               </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/30 to-transparent" />
+            <div className="absolute bottom-5 left-5 right-5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-white/85">
+                {formatEventDate(eventDateValue, { variant: 'full' })}
+              </p>
+              <h1 className="mt-2 text-2xl font-semibold text-white sm:text-3xl">
+                {eventTitle}
+              </h1>
+              {event.location && (
+                <p className="mt-2 text-sm text-white/85 sm:text-base">{event.location}</p>
+              )}
             </div>
-          )}
+          </div>
 
           <div className="grid gap-8 px-4 py-6 sm:px-6 sm:py-8 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="space-y-6">
@@ -149,10 +153,10 @@ export default function EventDetails() {
                   <h3 className="text-sm font-semibold uppercase tracking-wide text-lasa-400">
                     Gallery
                   </h3>
-                  <div className="mt-3 grid grid-cols-2 gap-3 md:grid-cols-3">
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
                     {gallery.map((url, index) => (
-                      <div key={`${url}-${index}`} className="overflow-hidden rounded-xl border border-lasa-200">
-                        <img src={url} alt={`Gallery ${index + 1}`} className="h-28 w-full object-cover" />
+                      <div key={`${url}-${index}`} className="aspect-[16/9] overflow-hidden rounded-xl border border-lasa-200">
+                        <img src={url} alt={`Gallery ${index + 1}`} className="h-full w-full object-cover" />
                       </div>
                     ))}
                   </div>
@@ -176,7 +180,7 @@ export default function EventDetails() {
                   )}
                 </div>
                 <p className="mt-2 text-sm font-semibold text-lasa-600">
-                  {formatEventDate(event.startDate, { variant: 'full' })}
+                  {formatEventDate(eventDateValue, { variant: 'full' })}
                 </p>
                 {event.location && (
                   <p className="mt-2 text-sm text-lasa-500">{event.location}</p>

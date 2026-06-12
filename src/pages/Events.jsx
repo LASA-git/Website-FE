@@ -1,29 +1,26 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchCurrentEvents } from '../api/events';
 import LoadingState from '../components/common/LoadingState';
 import ErrorState from '../components/common/ErrorState';
 import EmptyState from '../components/common/EmptyState';
-import EventCard from '../components/events/EventCard';
-import { CONTACT } from '../constants/contact';
-import { shareEvent } from '../utils/shareEvent';
+import { formatEventDate } from '../utils/dateDisplay';
 
 export default function Events() {
-  const actionButtonBaseClass =
-    'inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-full border px-2 text-[10px] font-semibold uppercase tracking-[0.08em] transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lasa-300';
-  const contactButtonClass =
-    `${actionButtonBaseClass} border-lasa-500 bg-gradient-to-r from-lasa-600 to-lasa-500 text-white shadow-sm hover:from-lasa-700 hover:to-lasa-600`;
-  const shareButtonClass =
-    `${actionButtonBaseClass} border-lasa-300 bg-white text-lasa-700 shadow-sm hover:border-lasa-400 hover:bg-lasa-100 disabled:cursor-not-allowed disabled:opacity-60`;
-  const registerButtonClass =
-    `${actionButtonBaseClass} border-amber-600 bg-amber-500 text-white shadow-sm hover:bg-amber-600`;
-  const quickContactClass =
-    'inline-flex h-7 w-full items-center justify-center gap-1 rounded-full border border-lasa-300 bg-lasa-50 px-2 text-[10px] font-semibold uppercase tracking-wide text-lasa-700 transition-all duration-200 hover:-translate-y-0.5 hover:border-lasa-400 hover:bg-lasa-100';
+  const sortOptions = [
+    { value: 'date_desc', label: 'Newest First' },
+    { value: 'date_asc', label: 'Oldest First' },
+    { value: 'title_asc', label: 'A-Z' },
+    { value: 'title_desc', label: 'Z-A' },
+  ];
 
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [shareState, setShareState] = useState({});
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
+  const [sortBy, setSortBy] = useState('date_desc');
+  const [showFilters, setShowFilters] = useState(false);
 
   const loadEvents = useCallback(async () => {
     setLoading(true);
@@ -42,53 +39,184 @@ export default function Events() {
     loadEvents();
   }, [loadEvents]);
 
-  const handleShare = async (event) => {
-    const eventId = event?._id || event?.id;
-    if (!eventId) return;
+  const normalizeDate = (event) => event?.startDate || event?.date || '';
+  const getEventTitle = (event) => event?.title || event?.name || 'LASA Event';
+  const getEventImage = (event) => event?.coverImageUrl || event?.gallery?.[0] || event?.image || event?.flyerUrl || '';
+  const getEventTimestamp = (event) => {
+    const rawDate = normalizeDate(event);
+    if (!rawDate) return null;
+    const parsed = new Date(rawDate).getTime();
+    return Number.isFinite(parsed) ? parsed : null;
+  };
 
-    setShareState((prev) => ({
-      ...prev,
-      [eventId]: { loading: true, message: '' },
-    }));
-
-    try {
-      const shareResult = await shareEvent({
-        title: event.title || 'LASA Event',
-        text: event.description
-          ? event.description.slice(0, 180)
-          : 'Join this LASA event and be part of community service.',
-        url: `${window.location.origin}/events/${eventId}`,
-      });
-
-      setShareState((prev) => ({
-        ...prev,
-        [eventId]: {
-          loading: false,
-          message: shareResult === 'copied' ? 'Link copied.' : '',
-        },
-      }));
-    } catch (err) {
-      setShareState((prev) => ({
-        ...prev,
-        [eventId]: {
-          loading: false,
-          message: err?.name === 'AbortError' ? '' : 'Unable to share.',
-        },
-      }));
+  const availableYears = useMemo(() => {
+    const yearMap = new Map();
+    for (const event of events) {
+      const rawDate = normalizeDate(event);
+      if (!rawDate) continue;
+      const year = new Date(rawDate).getFullYear();
+      if (!Number.isFinite(year)) continue;
+      yearMap.set(year, (yearMap.get(year) || 0) + 1);
     }
+
+    return [...yearMap.entries()]
+      .sort((a, b) => b[0] - a[0])
+      .map(([year, count]) => ({ year, count }));
+  }, [events]);
+
+  const filteredEvents = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    const next = events.filter((event) => {
+      const title = getEventTitle(event).toLowerCase();
+      const description = (event?.description || '').toLowerCase();
+      const location = (event?.location || '').toLowerCase();
+
+      if (query && !title.includes(query) && !description.includes(query) && !location.includes(query)) {
+        return false;
+      }
+
+      if (!selectedYear) return true;
+      const rawDate = normalizeDate(event);
+      if (!rawDate) return false;
+      return String(new Date(rawDate).getFullYear()) === selectedYear;
+    });
+
+    next.sort((a, b) => {
+      if (sortBy === 'title_asc') {
+        return getEventTitle(a).localeCompare(getEventTitle(b));
+      }
+      if (sortBy === 'title_desc') {
+        return getEventTitle(b).localeCompare(getEventTitle(a));
+      }
+
+      const aDate = getEventTimestamp(a);
+      const bDate = getEventTimestamp(b);
+      if (aDate === null && bDate === null) return 0;
+      if (aDate === null) return 1;
+      if (bDate === null) return -1;
+      if (sortBy === 'date_asc') return aDate - bDate;
+      return bDate - aDate;
+    });
+
+    return next;
+  }, [events, searchQuery, selectedYear, sortBy]);
+
+  const resultsText = useMemo(() => {
+    const totalEvents = filteredEvents.length;
+    let filterText = '';
+
+    if (selectedYear) {
+      filterText += `from ${selectedYear}`;
+    }
+    if (searchQuery.trim()) {
+      filterText += `${filterText ? ' ' : ''}matching "${searchQuery.trim()}"`;
+    }
+
+    if (filterText) {
+      return `Found ${totalEvents} event${totalEvents === 1 ? '' : 's'} ${filterText}`;
+    }
+
+    return `Showing ${totalEvents} event${totalEvents === 1 ? '' : 's'}`;
+  }, [filteredEvents.length, searchQuery, selectedYear]);
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setSelectedYear('');
+    setSortBy('date_desc');
   };
 
   return (
-    <section className="bg-lasa-50 py-12 sm:py-16">
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-semibold text-lasa-600 sm:text-3xl">Events</h1>
-          <p className="mt-3 text-sm text-lasa-500 sm:text-base">
-            Discover LASA community events and service activities.
+    <section className="min-h-screen bg-lasa-50 py-12 sm:py-16">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6">
+        <div className="rounded-2xl bg-white px-6 py-10 text-center shadow-sm sm:px-10">
+          <h1 className="text-3xl font-semibold text-lasa-600 sm:text-4xl">Events</h1>
+          <p className="mx-auto mt-3 max-w-2xl text-sm text-lasa-500 sm:text-base">
+            Discover LASA community events and service activities rooted in service and compassion.
           </p>
         </div>
 
-        <div className="mt-10">
+        <div className="mt-8 rounded-2xl bg-white p-4 shadow-sm sm:p-6">
+          <div className="mb-4 flex flex-col gap-3 md:flex-row">
+            <div className="relative flex-1">
+              <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-lasa-400">
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <circle cx="11" cy="11" r="8" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-4.3-4.3" />
+                </svg>
+              </span>
+              <input
+                type="text"
+                placeholder="Search by title, description, or location..."
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                className="w-full rounded-xl border border-lasa-200 bg-white py-3 pl-10 pr-3 text-sm text-lasa-600 outline-none transition focus:border-lasa-300 focus:ring-2 focus:ring-lasa-200"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowFilters((prev) => !prev)}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-lasa-200 px-4 py-3 text-sm font-semibold text-lasa-600 hover:bg-lasa-100 md:hidden"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 4h18M6 12h12M10 20h4" />
+              </svg>
+              Filters
+            </button>
+          </div>
+
+          <div className={`${showFilters ? 'flex' : 'hidden'} flex-col gap-4 md:flex md:flex-row md:items-end`}>
+            <div className="flex-1">
+              <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-lasa-500">
+                Filter by Year
+              </label>
+              <select
+                value={selectedYear}
+                onChange={(event) => setSelectedYear(event.target.value)}
+                className="w-full rounded-xl border border-lasa-200 bg-white px-3 py-2.5 text-sm text-lasa-600 outline-none transition focus:border-lasa-300 focus:ring-2 focus:ring-lasa-200"
+              >
+                <option value="">All Years</option>
+                {availableYears.map((yearData) => (
+                  <option key={yearData.year} value={String(yearData.year)}>
+                    {yearData.year} ({yearData.count} event{yearData.count === 1 ? '' : 's'})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex-[2]">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-lasa-500">Sort by</p>
+              <div className="flex flex-wrap gap-2">
+                {sortOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setSortBy(option.value)}
+                    className={`rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${sortBy === option.value
+                      ? 'bg-lasa-600 text-white'
+                      : 'border border-lasa-200 bg-white text-lasa-600 hover:bg-lasa-100'
+                      }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {(searchQuery || selectedYear || sortBy !== 'date_desc') && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="text-xs font-semibold uppercase tracking-wide text-lasa-500 underline hover:text-lasa-700"
+              >
+                Clear all
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-6 text-center text-sm text-lasa-500">{resultsText}</div>
+
+        <div className="mt-8">
           {loading && <LoadingState message="Loading events..." />}
           {!loading && error && <ErrorState message={error} onRetry={loadEvents} />}
           {!loading && !error && !events.length && (
@@ -97,79 +225,121 @@ export default function Events() {
               description="Check back soon for new LASA events."
             />
           )}
-          {!loading && !error && events.length > 0 && (
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {events.map((event) => (
-                <EventCard
-                  key={event._id || event.id}
-                  event={event}
-                  to={`/events/${event._id || event.id}`}
-                  actions={
-                    <div className="w-full min-h-[6.25rem]">
-                      <div className={`grid gap-2 ${event.registrationLink ? 'grid-cols-3' : 'grid-cols-2'}`}>
-                        {event.registrationLink && (
-                          <a
-                            href={event.registrationLink}
-                            target="_blank"
-                            rel="noreferrer"
-                            className={registerButtonClass}
-                          >
-                            Register
-                          </a>
-                        )}
+          {!loading && !error && events.length > 0 && filteredEvents.length === 0 && (
+            <EmptyState
+              title="No events found"
+              description="Try adjusting your search, year filter, or sort order."
+            />
+          )}
+          {!loading && !error && filteredEvents.length > 0 && (
+            <div
+              className={`grid gap-8 ${filteredEvents.length === 1
+                ? 'mx-auto max-w-md grid-cols-1'
+                : filteredEvents.length === 2
+                  ? 'grid-cols-1 md:grid-cols-2'
+                  : 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
+                }`}
+            >
+              {filteredEvents.map((event) => {
+                const eventId = event._id || event.id;
+                const title = getEventTitle(event);
+                const eventDate = normalizeDate(event);
+                const image = getEventImage(event);
+                const description = event.description || 'More details will be shared soon.';
+                const descriptionWords = description.replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+                const descriptionPreview = descriptionWords.length > 7
+                  ? `${descriptionWords.slice(0, 7).join(' ')} . . .`
+                  : descriptionWords.join(' ');
+                const galleryCount = Array.isArray(event.gallery) ? event.gallery.length : 0;
+                const eventYear = eventDate ? new Date(eventDate).getFullYear() : null;
+
+                return (
+                  <article
+                    key={eventId}
+                    className="flex h-[22.5rem] flex-col overflow-hidden rounded-2xl border border-lasa-200 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                  >
+                    <div className="relative h-44 overflow-hidden md:h-48">
+                      {image ? (
+                        <img
+                          src={image}
+                          alt={title}
+                          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center bg-gray-100 text-sm text-gray-400">No image available</div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-lasa-900/70 to-transparent" />
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <h2
+                          className="text-lg font-semibold text-white"
+                          style={{
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {title}
+                        </h2>
+                      </div>
+                      {eventYear && (
+                        <div className="absolute right-4 top-4 rounded-full bg-black/60 px-2 py-1 text-xs font-semibold text-white">
+                          {eventYear}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex flex-1 flex-col p-4 md:p-5">
+                      <p
+                        className="mb-3 min-h-[1.5rem] text-sm leading-6 text-lasa-600"
+                      >
+                        {descriptionPreview}
+                      </p>
+
+                      <div className="mb-3">
+                        <div className="flex items-center text-sm text-lasa-500">
+                          <svg className="mr-2 h-4 w-4 text-lasa-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 2v4M16 2v4M3 10h18M5 6h14a2 2 0 012 2v11a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2z" />
+                          </svg>
+                          {formatEventDate(eventDate, { variant: 'short' })}
+                        </div>
+                      </div>
+
+                      <div className="mt-auto flex items-center justify-between gap-3 border-t border-lasa-100 pt-3">
+                        <div className="text-sm text-lasa-500">
+                          {galleryCount} photo{galleryCount === 1 ? '' : 's'}
+                        </div>
                         <Link
-                          to="/contact"
-                          className={contactButtonClass}
+                          to={`/events/${eventId}`}
+                          className="inline-flex h-10 min-w-[150px] items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-lasa-600 px-4 py-2 text-sm font-semibold text-white transition-colors duration-300 hover:bg-lasa-700 focus:outline-none focus:ring-2 focus:ring-lasa-500 focus:ring-offset-2"
+                          aria-label={`View details for ${title}`}
                         >
-                          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M1.5 12s3.75-7.5 10.5-7.5S22.5 12 22.5 12s-3.75 7.5-10.5 7.5S1.5 12 1.5 12z" />
+                            <circle cx="12" cy="12" r="3" />
                           </svg>
-                          Contact
+                          View Details
                         </Link>
-                        <button
-                          type="button"
-                          onClick={() => handleShare(event)}
-                          disabled={shareState[event._id || event.id]?.loading}
-                          className={shareButtonClass}
-                        >
-                          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C9.886 12.588 11.304 12 12.75 12c2.426 0 4.774 1.328 6.75 3.75m-10.816-2.408C7.41 14.145 6.25 15.436 5.25 17.25M4.5 4.5h15v15h-15v-15z" />
-                          </svg>
-                          {shareState[event._id || event.id]?.loading ? 'Sharing...' : 'Share'}
-                        </button>
-                      </div>
-                      <div className="mt-2 grid grid-cols-2 gap-2">
-                        <a href={CONTACT.phoneHref} className={quickContactClass}>
-                          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                          </svg>
-                          Call
-                        </a>
-                        <a href={CONTACT.emailHref} className={quickContactClass}>
-                          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                          </svg>
-                          Email
-                        </a>
-                      </div>
-                      <div className="mt-2 min-h-[1.25rem]">
-                        {shareState[event._id || event.id]?.message && (
-                          <span className="rounded-full bg-lasa-100 px-2 py-1 text-[11px] font-medium text-lasa-600">
-                            {shareState[event._id || event.id]?.message}
-                          </span>
-                        )}
                       </div>
                     </div>
-                  }
-                />
-              ))}
+                  </article>
+                );
+              })}
             </div>
           )}
+
           {!loading && !error && (
-            <div className="mt-12 flex items-center justify-center">
+            <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 rounded-full border border-lasa-200 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-widest text-lasa-600 shadow-sm transition-all hover:-translate-y-0.5 hover:bg-lasa-100"
+              >
+                Back to home
+              </Link>
               <Link
                 to="/archived-events"
-                className="inline-flex items-center gap-2 rounded-full border border-lasa-200 bg-white px-6 py-3 text-sm font-semibold text-lasa-600 shadow-sm transition-all hover:-translate-y-0.5 hover:bg-lasa-100"
+                className="inline-flex items-center gap-2 rounded-full border border-lasa-200 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-widest text-lasa-600 shadow-sm transition-all hover:-translate-y-0.5 hover:bg-lasa-100"
               >
                 View archived events
                 <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
