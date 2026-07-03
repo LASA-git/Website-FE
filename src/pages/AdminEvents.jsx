@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { fetchArchivedEvents, fetchCurrentEvents, deleteEvent } from '../api/events';
 import { useAuth } from '../auth/AuthProvider';
 import LoadingState from '../components/common/LoadingState';
@@ -9,11 +9,14 @@ import EventCard from '../components/events/EventCard';
 
 export default function AdminEvents() {
   const { token, signOut } = useAuth();
+  const [searchParams] = useSearchParams();
   const [currentEvents, setCurrentEvents] = useState([]);
   const [archivedEvents, setArchivedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
+
+  const selectedSection = searchParams.get('section') === 'archived' ? 'archived' : 'current';
 
   const loadEvents = useCallback(async () => {
     setLoading(true);
@@ -67,11 +70,19 @@ export default function AdminEvents() {
           </div>
           <div className="flex items-center gap-3">
             <Link
-              to="/admin/events/new"
-              className="rounded-xl bg-lasa-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-lasa-700"
+              to="/admin/dashboard"
+              className="rounded-xl border border-lasa-200 bg-white px-4 py-2 text-sm font-semibold text-lasa-600 hover:bg-lasa-100"
             >
-              New Event
+              Sections
             </Link>
+            {selectedSection === 'current' && (
+              <Link
+                to="/admin/events/new?section=current"
+                className="rounded-xl bg-lasa-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-lasa-700"
+              >
+                New Event
+              </Link>
+            )}
             <button
               type="button"
               onClick={signOut}
@@ -88,31 +99,59 @@ export default function AdminEvents() {
           </div>
         )}
 
+        <div className="mt-6 inline-flex rounded-xl border border-lasa-200 bg-white p-1">
+          <Link
+            to="/admin/events?section=current"
+            className={`rounded-lg px-4 py-2 text-sm font-semibold ${
+              selectedSection === 'current'
+                ? 'bg-lasa-600 text-white'
+                : 'text-lasa-600 hover:bg-lasa-100'
+            }`}
+          >
+            Events
+          </Link>
+          <Link
+            to="/admin/events?section=archived"
+            className={`rounded-lg px-4 py-2 text-sm font-semibold ${
+              selectedSection === 'archived'
+                ? 'bg-lasa-600 text-white'
+                : 'text-lasa-600 hover:bg-lasa-100'
+            }`}
+          >
+            Past Events
+          </Link>
+        </div>
+
         <div className="mt-8 space-y-10">
-          <EventSection
-            title="Current Year"
-            events={currentEvents}
-            emptyLabel="No current-year events yet."
-            actions={(event) => (
-              <AdminActions
-                event={event}
-                onDelete={handleDelete}
-                deletingId={deletingId}
-              />
-            )}
-          />
-          <EventSection
-            title="Archived"
-            events={archivedEvents}
-            emptyLabel="No archived events yet."
-            actions={(event) => (
-              <AdminActions
-                event={event}
-                onDelete={handleDelete}
-                deletingId={deletingId}
-              />
-            )}
-          />
+          {selectedSection === 'current' ? (
+            <EventSection
+              title="Current Year"
+              events={currentEvents}
+              emptyLabel="No current-year events yet."
+              actions={(event) => (
+                <AdminActions
+                  event={event}
+                  selectedSection={selectedSection}
+                  onDelete={handleDelete}
+                  deletingId={deletingId}
+                />
+              )}
+            />
+          ) : (
+            <EventSection
+              title="Archived"
+              events={archivedEvents}
+              emptyLabel="No archived events yet."
+              actions={(event) => (
+                <AdminActions
+                  event={event}
+                  selectedSection={selectedSection}
+                  onDelete={handleDelete}
+                  deletingId={deletingId}
+                />
+              )}
+            />
+          )}
         </div>
       </div>
     </section>
@@ -143,12 +182,12 @@ function EventSection({ title, events, emptyLabel, actions }) {
   );
 }
 
-function AdminActions({ event, onDelete, deletingId }) {
+function AdminActions({ event, selectedSection, onDelete, deletingId }) {
   const eventId = event._id || event.id;
   return (
     <>
       <Link
-        to={`/admin/events/${eventId}/edit`}
+        to={`/admin/events/${eventId}/edit?section=${selectedSection}`}
         className="rounded-lg border border-lasa-200 bg-white px-3 py-1.5 text-xs font-semibold text-lasa-600 hover:bg-lasa-100"
       >
         Edit

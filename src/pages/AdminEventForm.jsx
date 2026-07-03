@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   createEvent,
   fetchEventById,
@@ -29,6 +29,7 @@ export default function AdminEventForm() {
   const isEditing = Boolean(eventId);
   const { token } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [formState, setFormState] = useState(INITIAL_STATE);
   const [loading, setLoading] = useState(isEditing);
@@ -36,6 +37,11 @@ export default function AdminEventForm() {
   const [error, setError] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [flyerLoading, setFlyerLoading] = useState(false);
+
+  const section = new URLSearchParams(location.search).get('section') === 'archived'
+    ? 'archived'
+    : 'current';
+  const dashboardPath = `/admin/events?section=${section}`;
 
   useEffect(() => {
     let isMounted = true;
@@ -93,12 +99,12 @@ export default function AdminEventForm() {
         const created = await createEvent(payload, token);
         const createdId = created?._id || created?.id;
         if (createdId) {
-          navigate(`/admin/events/${createdId}/edit`, { replace: true });
+          navigate(`/admin/events/${createdId}/edit?section=${section}`, { replace: true });
           return;
         }
       }
 
-      navigate('/admin/events');
+      navigate(dashboardPath);
     } catch (err) {
       setError(err?.message || 'Unable to save event');
     } finally {
@@ -194,7 +200,7 @@ export default function AdminEventForm() {
             </p>
           </div>
           <Link
-            to="/admin/events"
+            to={dashboardPath}
             className="rounded-xl border border-lasa-200 bg-white px-4 py-2 text-sm font-semibold text-lasa-600 hover:bg-lasa-100"
           >
             Back to Dashboard
@@ -377,7 +383,7 @@ export default function AdminEventForm() {
 
           <div className="flex flex-wrap items-center justify-end gap-3">
             <Link
-              to="/admin/events"
+              to={dashboardPath}
               className="rounded-xl border border-lasa-200 bg-white px-4 py-2 text-sm font-semibold text-lasa-600 hover:bg-lasa-100"
             >
               Cancel

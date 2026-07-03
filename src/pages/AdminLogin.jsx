@@ -12,7 +12,7 @@ export default function AdminLogin() {
 
   useEffect(() => {
     if (token) {
-      navigate('/admin/events', { replace: true });
+      navigate('/admin/dashboard', { replace: true });
     }
   }, [token, navigate]);
 
@@ -27,7 +27,8 @@ export default function AdminLogin() {
     setError(null);
     try {
       await signIn(formState);
-      const destination = location.state?.from?.pathname || '/admin/events';
+      const from = location.state?.from;
+      const destination = from ? `${from.pathname || ''}${from.search || ''}` : '/admin/dashboard';
       navigate(destination, { replace: true });
     } catch (err) {
       setError(err?.message || 'Login failed');

@@ -12,6 +12,15 @@ export default function UpcomingEventsGallery() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const getItemsPerPage = useCallback(() => {
+    if (typeof window === 'undefined') return 3;
+    if (window.innerWidth >= 1024) return 3;
+    if (window.innerWidth >= 768) return 2;
+    return 1;
+  }, []);
+
+  const [itemsPerPage, setItemsPerPage] = useState(getItemsPerPage);
+  const [currentPage, setCurrentPage] = useState(0);
 
   const loadEvents = useCallback(async () => {
     setLoading(true);
@@ -30,6 +39,16 @@ export default function UpcomingEventsGallery() {
     loadEvents();
   }, [loadEvents]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setItemsPerPage(getItemsPerPage());
+      setCurrentPage(0);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [getItemsPerPage]);
+
   const displayEvents = useMemo(() => {
     const sorted = [...events].sort((a, b) => {
       const aDateRaw = a?.startDate || a?.date;
@@ -47,8 +66,32 @@ export default function UpcomingEventsGallery() {
       return bDate - aDate;
     });
 
-    return sorted.slice(0, 3);
+    return sorted;
   }, [events]);
+
+  const totalPages = Math.ceil(displayEvents.length / itemsPerPage);
+  const showCarousel = displayEvents.length > itemsPerPage;
+  const visibleEvents = displayEvents.slice(
+    currentPage * itemsPerPage,
+    currentPage * itemsPerPage + itemsPerPage
+  );
+
+  useEffect(() => {
+    if (!totalPages) {
+      setCurrentPage(0);
+      return;
+    }
+
+    if (currentPage > totalPages - 1) {
+      setCurrentPage(totalPages - 1);
+    }
+  }, [currentPage, totalPages]);
+
+  const goToPage = (page) => {
+    if (!totalPages) return;
+    const bounded = ((page % totalPages) + totalPages) % totalPages;
+    setCurrentPage(bounded);
+  };
 
   return (
     <>
@@ -86,15 +129,12 @@ export default function UpcomingEventsGallery() {
               />
             )}
             {!loading && !error && displayEvents.length > 0 && (
-              <div
-                className={`grid gap-8 justify-items-center ${displayEvents.length === 1
-                  ? 'grid-cols-1'
-                  : displayEvents.length === 2
-                    ? 'grid-cols-1 md:grid-cols-2'
-                    : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-                  }`}
-              >
-                {displayEvents.map((event) => {
+              <div className="space-y-6">
+                <div
+                  className="grid gap-8 justify-items-center"
+                  style={{ gridTemplateColumns: `repeat(${itemsPerPage}, minmax(0, 1fr))` }}
+                >
+                {visibleEvents.map((event) => {
                   const eventImage = event.coverImageUrl || event.flyerUrl || event.gallery?.[0];
                   const eventTitle = event.title || event.name || 'LASA Event';
                   const eventDate = event.startDate || event.date;
@@ -154,6 +194,47 @@ export default function UpcomingEventsGallery() {
                     </button>
                   );
                 })}
+                </div>
+
+                {showCarousel && (
+                  <div className="flex items-center justify-center gap-4">
+                    <button
+                      type="button"
+                      onClick={() => goToPage(currentPage - 1)}
+                      className="rounded-full border border-lasa-300 bg-white p-2 text-lasa-600 hover:bg-lasa-100"
+                      aria-label="Previous events"
+                    >
+                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+
+                    <div className="flex gap-2">
+                      {Array.from({ length: totalPages }).map((_, page) => (
+                        <button
+                          type="button"
+                          key={page}
+                          onClick={() => goToPage(page)}
+                          className={`h-2.5 rounded-full transition-all ${
+                            page === currentPage ? 'w-6 bg-lasa-600' : 'w-2.5 bg-lasa-300 hover:bg-lasa-400'
+                          }`}
+                          aria-label={`Go to events page ${page + 1}`}
+                        />
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => goToPage(currentPage + 1)}
+                      className="rounded-full border border-lasa-300 bg-white p-2 text-lasa-600 hover:bg-lasa-100"
+                      aria-label="Next events"
+                    >
+                      <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>

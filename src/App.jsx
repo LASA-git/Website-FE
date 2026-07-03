@@ -15,6 +15,8 @@ import Volunteer from './pages/Volunteer';
 import AdminLogin from './pages/AdminLogin';
 import AdminEvents from './pages/AdminEvents';
 import AdminEventForm from './pages/AdminEventForm';
+import AdminSectionSelector from './pages/AdminSectionSelector';
+import AdminRecentEvents from './pages/AdminRecentEvents';
 import RequireAuth from './components/admin/RequireAuth';
 import RouteScrollToTop from './components/common/RouteScrollToTop';
 
@@ -44,10 +46,26 @@ export default function App() {
           <Route path="/donate" element={<Navigate to="/volunteer" replace />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
+            path="/admin/dashboard"
+            element={
+              <RequireAuth>
+                <AdminSectionSelector />
+              </RequireAuth>
+            }
+          />
+          <Route
             path="/admin/events"
             element={
               <RequireAuth>
                 <AdminEvents />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/admin/recent-events"
+            element={
+              <RequireAuth>
+                <AdminRecentEvents />
               </RequireAuth>
             }
           />
@@ -67,6 +85,7 @@ export default function App() {
               </RequireAuth>
             }
           />
+          <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
         </Routes>
       </main>
       <Footer />
