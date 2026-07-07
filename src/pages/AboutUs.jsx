@@ -1,4 +1,5 @@
 import ScrollReveal from '../components/common/ScrollReveal';
+import RecentEventsGallery from '../components/RecentEventsGallery';
 import { revealDelay } from '../constants/motion';
 
 const CORE_VALUES = [
@@ -131,6 +132,18 @@ export default function AboutUs() {
               We do not view service as isolated projects. We see it as a continuous promise to
               stand beside communities with consistency, dignity, and care.
             </p>
+          </div>
+        </ScrollReveal>
+
+        <ScrollReveal delay={revealDelay(1, { base: 180 })} direction="up">
+          <div className="mt-10 rounded-3xl border border-lasa-200 bg-white/95 p-6 shadow-sm sm:p-8">
+            <RecentEventsGallery
+              title="Community Highlights"
+              description="A closer look at the service events, outreach moments, and stories that shape our work."
+              className=""
+              showHeader
+              showCarousel
+            />
           </div>
         </ScrollReveal>
       </div>
