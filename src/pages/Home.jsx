@@ -18,8 +18,7 @@ export default function Home() {
                 We are a charitable organization dedicated to undertaking community
                 service activities based on Five Universal Human Values – Truth,
                 Non-violence, Peace, Love, and Right Conduct. The acronym LASA
-                stands for "Love All, Serve All". We are a free, non-denominational,
-                and voluntary organization. Our members come from all walks of life
+                stands for "Love All, Serve All". Our members come from all walks of life
                 and share a common goal – to empower the community around us through
                 the practice of Love and Service.
               </p>

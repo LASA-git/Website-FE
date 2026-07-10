@@ -46,7 +46,7 @@ export default function RecentEventsGallery({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [fullscreenImageUrl, setFullscreenImageUrl] = useState(null);
+  const [fullscreenIndex, setFullscreenIndex] = useState(null);
 
   const getYouTubeItemsPerPage = useCallback(() => {
     if (typeof window === 'undefined') return 3;
@@ -125,16 +125,26 @@ export default function RecentEventsGallery({
     const activeItem = carouselItems[index];
     if (activeItem?.imageUrl) {
       setCurrentIndex(index);
-      setFullscreenImageUrl(activeItem.imageUrl);
+      setFullscreenIndex(index);
     }
   };
 
   const closeFullscreen = () => {
-    setFullscreenImageUrl(null);
+    setFullscreenIndex(null);
   };
 
+  const goToFullscreen = (index) => {
+    if (!carouselItems.length) return;
+    const bounded = ((index % carouselItems.length) + carouselItems.length) % carouselItems.length;
+    setCurrentIndex(bounded);
+    setFullscreenIndex(bounded);
+  };
+
+  const fullscreenItem =
+    fullscreenIndex !== null ? carouselItems[fullscreenIndex] : null;
+
   useEffect(() => {
-    if (!fullscreenImageUrl) {
+    if (fullscreenIndex === null) {
       document.body.style.overflow = '';
       return undefined;
     }
@@ -144,6 +154,10 @@ export default function RecentEventsGallery({
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         closeFullscreen();
+      } else if (event.key === 'ArrowLeft') {
+        goToFullscreen(fullscreenIndex - 1);
+      } else if (event.key === 'ArrowRight') {
+        goToFullscreen(fullscreenIndex + 1);
       }
     };
 
@@ -152,7 +166,7 @@ export default function RecentEventsGallery({
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = '';
     };
-  }, [fullscreenImageUrl]);
+  }, [fullscreenIndex, carouselItems.length]);
 
   return (
     <section className={`w-full ${className}`.trim()}>
@@ -357,7 +371,7 @@ export default function RecentEventsGallery({
         )}
       </div>
 
-      {fullscreenImageUrl && (
+      {fullscreenItem?.imageUrl && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
           role="dialog"
@@ -367,14 +381,49 @@ export default function RecentEventsGallery({
           <button
             type="button"
             onClick={closeFullscreen}
-            className="absolute right-4 top-4 rounded-lg border border-white/30 bg-black/60 px-3 py-1.5 text-sm font-semibold text-white hover:bg-black/80"
+            className="absolute right-4 top-4 z-10 rounded-lg border border-white/30 bg-black/60 px-3 py-1.5 text-sm font-semibold text-white hover:bg-black/80"
             aria-label="Close fullscreen image"
           >
             Close
           </button>
+
+          {carouselItems.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  goToFullscreen(fullscreenIndex - 1);
+                }}
+                className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/30 bg-black/60 p-3 text-white transition-colors hover:bg-black/80"
+                aria-label="Previous image"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  goToFullscreen(fullscreenIndex + 1);
+                }}
+                className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-white/30 bg-black/60 p-3 text-white transition-colors hover:bg-black/80"
+                aria-label="Next image"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+              <p className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-full bg-black/60 px-3 py-1 text-sm font-medium text-white">
+                {fullscreenIndex + 1} / {carouselItems.length}
+              </p>
+            </>
+          )}
+
           <img
-            src={fullscreenImageUrl}
-            alt="Recent event fullscreen"
+            src={fullscreenItem.imageUrl}
+            alt={fullscreenItem.altText || `Recent event image ${fullscreenIndex + 1}`}
             className="max-h-[90vh] max-w-[95vw] rounded-lg object-contain"
             onClick={(event) => event.stopPropagation()}
           />
