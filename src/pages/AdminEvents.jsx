@@ -10,8 +10,16 @@ import EventCard from '../components/events/EventCard';
 function getEventTimestamp(event) {
   const raw = event?.startDate || event?.date;
   if (!raw) return null;
-  const parsed = new Date(raw).getTime();
-  return Number.isFinite(parsed) ? parsed : null;
+  if (typeof raw === 'string') {
+    const key = raw.slice(0, 10);
+    return /^\d{4}-\d{2}-\d{2}$/.test(key) ? key : null;
+  }
+  const parsed = new Date(raw);
+  if (!Number.isFinite(parsed.getTime())) return null;
+  const year = parsed.getUTCFullYear();
+  const month = String(parsed.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(parsed.getUTCDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 function sortByNearestDate(events) {
@@ -21,7 +29,7 @@ function sortByNearestDate(events) {
     if (aDate === null && bDate === null) return 0;
     if (aDate === null) return 1;
     if (bDate === null) return -1;
-    return aDate - bDate;
+    return aDate.localeCompare(bDate);
   });
 }
 

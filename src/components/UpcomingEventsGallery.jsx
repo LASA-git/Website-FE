@@ -6,6 +6,30 @@ import ErrorState from './common/ErrorState';
 import EmptyState from './common/EmptyState';
 import EventModal from './events/EventModal';
 import { formatEventDate } from '../utils/dateDisplay';
+import { EVENT_FLYER_ASPECT_RATIO } from '../constants/eventMedia';
+
+function getEventDateKey(event) {
+  const raw = event?.startDate || event?.date || '';
+  if (!raw) return '';
+  if (typeof raw === 'string') return raw.slice(0, 10);
+  const parsed = new Date(raw);
+  if (!Number.isFinite(parsed.getTime())) return '';
+  const year = parsed.getUTCFullYear();
+  const month = String(parsed.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(parsed.getUTCDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function sortEventsNearestFirst(events) {
+  return [...(events || [])].sort((a, b) => {
+    const aKey = getEventDateKey(a);
+    const bKey = getEventDateKey(b);
+    if (!aKey && !bKey) return 0;
+    if (!aKey) return 1;
+    if (!bKey) return -1;
+    return aKey.localeCompare(bKey);
+  });
+}
 
 export default function UpcomingEventsGallery() {
   const [events, setEvents] = useState([]);
@@ -27,7 +51,8 @@ export default function UpcomingEventsGallery() {
     setError(null);
     try {
       const data = await fetchActiveEvents();
-      setEvents(data || []);
+      setEvents(sortEventsNearestFirst(data || []));
+      setCurrentPage(0);
     } catch (err) {
       setError(err?.message || 'Unable to load events');
     } finally {
@@ -49,25 +74,10 @@ export default function UpcomingEventsGallery() {
     return () => window.removeEventListener('resize', handleResize);
   }, [getItemsPerPage]);
 
-  const displayEvents = useMemo(() => {
-    const sorted = [...events].sort((a, b) => {
-      const aDateRaw = a?.startDate || a?.date;
-      const bDateRaw = b?.startDate || b?.date;
-      const aDate = aDateRaw ? new Date(aDateRaw).getTime() : null;
-      const bDate = bDateRaw ? new Date(bDateRaw).getTime() : null;
-
-      const aValid = Number.isFinite(aDate);
-      const bValid = Number.isFinite(bDate);
-
-      if (!aValid && !bValid) return 0;
-      if (!aValid) return 1;
-      if (!bValid) return -1;
-
-      return aDate - bDate;
-    });
-
-    return sorted;
-  }, [events]);
+  const displayEvents = useMemo(
+    () => sortEventsNearestFirst(events),
+    [events]
+  );
 
   const totalPages = Math.ceil(displayEvents.length / itemsPerPage);
   const showCarousel = displayEvents.length > itemsPerPage;
@@ -150,7 +160,10 @@ export default function UpcomingEventsGallery() {
                       className="group flex w-full max-w-sm flex-col items-center rounded-xl bg-white p-3 text-left shadow-xl transition-transform duration-200 hover:scale-105"
                       onClick={() => setSelectedEvent(event)}
                     >
-                      <div className="relative mb-3 w-full overflow-hidden rounded-lg border border-lasa-200 bg-lasa-50" style={{ aspectRatio: '1 / 1' }}>
+                      <div
+                        className="relative mb-3 w-full overflow-hidden rounded-lg border border-lasa-200 bg-lasa-50"
+                        style={{ aspectRatio: EVENT_FLYER_ASPECT_RATIO }}
+                      >
                         {eventImage ? (
                           <img
                             src={eventImage}
