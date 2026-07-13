@@ -14,6 +14,6 @@ export const NAV_LINKS = [
     label: 'Events',
     path: '/events',
   },
-  { label: 'Volunteer', path: '/volunteer' },
+  // { label: 'Volunteer', path: '/volunteer' },
   { label: 'Contact Us', path: '/contact' },
 ];

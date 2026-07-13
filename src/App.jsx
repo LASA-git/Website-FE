@@ -17,6 +17,7 @@ import AdminEvents from './pages/AdminEvents';
 import AdminEventForm from './pages/AdminEventForm';
 import AdminSectionSelector from './pages/AdminSectionSelector';
 import AdminRecentEvents from './pages/AdminRecentEvents';
+import AdminActivityGalleries from './pages/AdminActivityGalleries';
 import RequireAuth from './components/admin/RequireAuth';
 import RouteScrollToTop from './components/common/RouteScrollToTop';
 
@@ -66,6 +67,14 @@ export default function App() {
             element={
               <RequireAuth>
                 <AdminRecentEvents />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/admin/activity-galleries"
+            element={
+              <RequireAuth>
+                <AdminActivityGalleries />
               </RequireAuth>
             }
           />

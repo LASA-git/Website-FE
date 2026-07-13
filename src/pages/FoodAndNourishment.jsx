@@ -1,4 +1,5 @@
 import ScrollReveal from '../components/common/ScrollReveal';
+import ActivityGallerySection from '../components/activity/ActivityGallerySection';
 import { revealDelay } from '../constants/motion';
 
 const SOCIOCARE_PROGRAMS = [
@@ -131,6 +132,8 @@ export default function FoodAndNourishment() {
             </ul>
           </div>
         </ScrollReveal>
+
+        <ActivityGallerySection section="sociocare" />
       </div>
     </section>
   );

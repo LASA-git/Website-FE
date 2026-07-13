@@ -1,4 +1,5 @@
 import ScrollReveal from '../components/common/ScrollReveal';
+import ActivityGallerySection from '../components/activity/ActivityGallerySection';
 import { revealDelay } from '../constants/motion';
 
 const HEALTHCARE_PILLARS = [
@@ -114,6 +115,8 @@ export default function HealthAndWellness() {
             </ul>
           </div>
         </ScrollReveal>
+
+        <ActivityGallerySection section="healthcare" />
       </div>
     </section>
   );

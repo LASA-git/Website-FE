@@ -9,6 +9,12 @@ const SECTION_CARDS = [
     cta: 'Open Recent Events',
   },
   {
+    title: 'Edit Activities Gallery',
+    description: 'Manage healthcare, sociocare, and educare gallery images.',
+    to: '/admin/activity-galleries',
+    cta: 'Open Activities Gallery',
+  },
+  {
     title: 'Edit Events',
     description: 'Create and manage current-year event records.',
     to: '/admin/events?section=current',

@@ -1,4 +1,5 @@
 import ScrollReveal from '../components/common/ScrollReveal';
+import ActivityGallerySection from '../components/activity/ActivityGallerySection';
 import { revealDelay } from '../constants/motion';
 
 const EDUCARE_PROGRAMS = [
@@ -114,6 +115,8 @@ export default function MedicalClinic() {
             </ul>
           </div>
         </ScrollReveal>
+
+        <ActivityGallerySection section="educare" />
       </div>
     </section>
   );
