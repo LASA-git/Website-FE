@@ -31,29 +31,44 @@ function AccordionItem({ item, onClose }) {
 
   return (
     <div>
-      <button
-        type="button"
-        className={`flex items-center justify-between w-full px-6 py-4 text-[15px] font-medium border-b border-lasa-200 transition-colors duration-150 ${
-          isActive
-            ? 'text-lasa-600 font-bold bg-lasa-100'
-            : 'text-lasa-500 hover:text-lasa-600 hover:bg-lasa-100'
+      <div
+        className={`flex items-stretch border-b border-lasa-200 ${
+          isActive ? 'bg-lasa-100' : ''
         }`}
-        onClick={() => setIsExpanded((prev) => !prev)}
-        aria-expanded={isExpanded}
       >
-        {item.label}
-        <svg
-          className={`w-4 h-4 text-lasa-500 transition-transform duration-200 ${
-            isExpanded ? 'rotate-180' : ''
-          }`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2.5}
+        <NavLink
+          to={item.path}
+          onClick={onClose}
+          className={({ isActive: active }) =>
+            `flex-1 px-6 py-4 text-[15px] font-medium transition-colors duration-150 ${
+              active || isActive
+                ? 'text-lasa-600 font-bold'
+                : 'text-lasa-500 hover:text-lasa-600'
+            }`
+          }
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
+          {item.label}
+        </NavLink>
+        <button
+          type="button"
+          className="flex items-center justify-center px-4 text-lasa-500 transition-colors hover:text-lasa-600"
+          onClick={() => setIsExpanded((prev) => !prev)}
+          aria-expanded={isExpanded}
+          aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${item.label} submenu`}
+        >
+          <svg
+            className={`h-4 w-4 transition-transform duration-200 ${
+              isExpanded ? 'rotate-180' : ''
+            }`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2.5}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+      </div>
 
       <div
         className={`overflow-hidden transition-all duration-300 ${
