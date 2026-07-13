@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchCurrentEvents } from '../api/events';
+import { fetchActiveEvents } from '../api/events';
 import LoadingState from '../components/common/LoadingState';
 import ErrorState from '../components/common/ErrorState';
 import EmptyState from '../components/common/EmptyState';
@@ -9,8 +9,8 @@ import { EVENT_FLYER_ASPECT_RATIO } from '../constants/eventMedia';
 
 export default function Events() {
   const sortOptions = [
-    { value: 'date_desc', label: 'Newest First' },
-    { value: 'date_asc', label: 'Oldest First' },
+    { value: 'date_asc', label: 'Nearest First' },
+    { value: 'date_desc', label: 'Farthest First' },
     { value: 'title_asc', label: 'A-Z' },
     { value: 'title_desc', label: 'Z-A' },
   ];
@@ -20,14 +20,14 @@ export default function Events() {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
-  const [sortBy, setSortBy] = useState('date_desc');
+  const [sortBy, setSortBy] = useState('date_asc');
   const [showFilters, setShowFilters] = useState(false);
 
   const loadEvents = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchCurrentEvents();
+      const data = await fetchActiveEvents();
       setEvents(data || []);
     } catch (err) {
       setError(err?.message || 'Unable to load events');
@@ -123,7 +123,7 @@ export default function Events() {
   const clearFilters = () => {
     setSearchQuery('');
     setSelectedYear('');
-    setSortBy('date_desc');
+    setSortBy('date_asc');
   };
 
   return (
@@ -203,7 +203,7 @@ export default function Events() {
               </div>
             </div>
 
-            {(searchQuery || selectedYear || sortBy !== 'date_desc') && (
+            {(searchQuery || selectedYear || sortBy !== 'date_asc') && (
               <button
                 type="button"
                 onClick={clearFilters}

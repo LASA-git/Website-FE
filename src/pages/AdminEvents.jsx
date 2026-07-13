@@ -7,6 +7,24 @@ import ErrorState from '../components/common/ErrorState';
 import EmptyState from '../components/common/EmptyState';
 import EventCard from '../components/events/EventCard';
 
+function getEventTimestamp(event) {
+  const raw = event?.startDate || event?.date;
+  if (!raw) return null;
+  const parsed = new Date(raw).getTime();
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function sortByNearestDate(events) {
+  return [...(events || [])].sort((a, b) => {
+    const aDate = getEventTimestamp(a);
+    const bDate = getEventTimestamp(b);
+    if (aDate === null && bDate === null) return 0;
+    if (aDate === null) return 1;
+    if (bDate === null) return -1;
+    return aDate - bDate;
+  });
+}
+
 export default function AdminEvents() {
   const { token, signOut } = useAuth();
   const [searchParams] = useSearchParams();
@@ -26,8 +44,8 @@ export default function AdminEvents() {
         fetchCurrentEvents(),
         fetchArchivedEvents(),
       ]);
-      setCurrentEvents(current || []);
-      setArchivedEvents(archived || []);
+      setCurrentEvents(sortByNearestDate(current || []));
+      setArchivedEvents(sortByNearestDate(archived || []));
     } catch (err) {
       setError(err?.message || 'Unable to load events');
     } finally {

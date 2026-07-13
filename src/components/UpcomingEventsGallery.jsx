@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchCurrentEvents } from '../api/events';
+import { fetchActiveEvents } from '../api/events';
 import LoadingState from './common/LoadingState';
 import ErrorState from './common/ErrorState';
 import EmptyState from './common/EmptyState';
@@ -26,7 +26,7 @@ export default function UpcomingEventsGallery() {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchCurrentEvents();
+      const data = await fetchActiveEvents();
       setEvents(data || []);
     } catch (err) {
       setError(err?.message || 'Unable to load events');
@@ -63,7 +63,7 @@ export default function UpcomingEventsGallery() {
       if (!aValid) return 1;
       if (!bValid) return -1;
 
-      return bDate - aDate;
+      return aDate - bDate;
     });
 
     return sorted;
