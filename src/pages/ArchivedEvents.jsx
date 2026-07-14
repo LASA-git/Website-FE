@@ -33,7 +33,7 @@ export default function ArchivedEvents() {
         <div className="text-center">
           <h1 className="text-2xl font-semibold text-lasa-600 sm:text-3xl">Archived Events</h1>
           <p className="mt-3 text-sm text-lasa-500 sm:text-base">
-            A look back at LASA events from previous years.
+            A look back at LASA events that have already taken place.
           </p>
         </div>
 
