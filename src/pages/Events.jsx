@@ -246,8 +246,10 @@ export default function Events() {
                 const eventYear = eventDate ? new Date(eventDate).getFullYear() : null;
 
                 return (
-                  <article
+                  <Link
                     key={eventId}
+                    to={`/events/${eventId}`}
+                    aria-label={`View details for ${title}`}
                     className="flex w-full max-w-[220px] flex-col overflow-hidden rounded-2xl border border-lasa-200 bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:max-w-[240px]"
                   >
                     <div
@@ -279,20 +281,16 @@ export default function Events() {
                           </svg>
                           {formatEventDate(eventDate, { variant: 'short' })}
                         </div>
-                        <Link
-                          to={`/events/${eventId}`}
-                          className="inline-flex h-7 w-full items-center justify-center rounded-md bg-lasa-600 px-3 text-[11px] font-semibold text-white transition-colors duration-300 hover:bg-lasa-700 focus:outline-none focus:ring-2 focus:ring-lasa-500 focus:ring-offset-2"
-                          aria-label={`View details for ${title}`}
-                        >
+                        <span className="inline-flex h-7 w-full items-center justify-center rounded-md bg-lasa-600 px-3 text-[11px] font-semibold text-white">
                           View Details
-                        </Link>
+                        </span>
                       </div>
 
                       <p className="mt-2 text-xs font-extrabold leading-4 text-lasa-600">
                         {titlePreview}
                       </p>
                     </div>
-                  </article>
+                  </Link>
                 );
               })}
             </div>
