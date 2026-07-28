@@ -233,7 +233,7 @@ export default function Events() {
             />
           )}
           {!loading && !error && filteredEvents.length > 0 && (
-            <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
+            <div className="flex flex-wrap justify-center gap-8 sm:gap-10">
               {filteredEvents.map((event) => {
                 const eventId = event._id || event.id;
                 const title = getEventTitle(event);

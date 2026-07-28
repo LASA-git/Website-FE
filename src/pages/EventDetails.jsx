@@ -22,6 +22,7 @@ export default function EventDetails() {
   const [error, setError] = useState(null);
   const [sharing, setSharing] = useState(false);
   const [shareMessage, setShareMessage] = useState('');
+  const [fullscreenOpen, setFullscreenOpen] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -45,6 +46,22 @@ export default function EventDetails() {
       isMounted = false;
     };
   }, [eventId]);
+
+  useEffect(() => {
+    if (!fullscreenOpen) return undefined;
+
+    const handleKey = (evt) => {
+      if (evt.key === 'Escape') setFullscreenOpen(false);
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKey);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKey);
+    };
+  }, [fullscreenOpen]);
 
   const gallery = useMemo(() => event?.gallery || [], [event]);
   const eventTitle = event?.title || event?.name || 'LASA Event';
@@ -116,8 +133,11 @@ export default function EventDetails() {
         <div className="mt-6 overflow-hidden rounded-3xl border border-lasa-200 bg-white shadow-lg">
           {heroImage ? (
             <div className="border-b border-lasa-200 bg-lasa-50 p-4 sm:p-6">
-              <div
-                className="relative mx-auto max-w-sm overflow-hidden rounded-xl border border-lasa-200 bg-white shadow-sm"
+              <button
+                type="button"
+                onClick={() => setFullscreenOpen(true)}
+                aria-label={`View ${eventTitle} flyer fullscreen`}
+                className="relative mx-auto block w-full max-w-sm cursor-zoom-in overflow-hidden rounded-xl border border-lasa-200 bg-white shadow-sm transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lasa-300"
                 style={{ aspectRatio: EVENT_FLYER_ASPECT_RATIO }}
               >
                 <img
@@ -125,7 +145,7 @@ export default function EventDetails() {
                   alt={eventTitle}
                   className="absolute inset-0 h-full w-full object-contain"
                 />
-              </div>
+              </button>
             </div>
           ) : (
             <div className="flex h-48 items-center justify-center border-b border-lasa-200 bg-lasa-100 text-sm text-lasa-500">
@@ -231,7 +251,7 @@ export default function EventDetails() {
                   className={`${detailActionClass} disabled:cursor-not-allowed disabled:opacity-60`}
                 >
                   <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C9.886 12.588 11.304 12 12.75 12c2.426 0 4.774 1.328 6.75 3.75m-10.816-2.408C7.41 14.145 6.25 15.436 5.25 17.25M4.5 4.5h15v15h-15v-15z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v13" />
                   </svg>
                   {sharing ? 'Sharing...' : 'Share event'}
                 </button>
@@ -254,6 +274,31 @@ export default function EventDetails() {
           </div>
         </div>
       </div>
+
+      {fullscreenOpen && heroImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${eventTitle} flyer`}
+          onClick={() => setFullscreenOpen(false)}
+        >
+          <button
+            type="button"
+            onClick={() => setFullscreenOpen(false)}
+            className="absolute right-4 top-4 z-10 rounded-lg border border-white/30 bg-black/60 px-3 py-1.5 text-sm font-semibold text-white hover:bg-black/80"
+            aria-label="Close fullscreen image"
+          >
+            Close
+          </button>
+          <img
+            src={heroImage}
+            alt={eventTitle}
+            className="max-h-[90vh] max-w-[95vw] rounded-lg object-contain"
+            onClick={(evt) => evt.stopPropagation()}
+          />
+        </div>
+      )}
     </section>
   );
 }
