@@ -16,13 +16,13 @@ const SECTION_CARDS = [
   },
   {
     title: 'Edit Events',
-    description: 'Create and manage current-year event records.',
+    description: 'Create and manage upcoming event records.',
     to: '/admin/events?section=current',
     cta: 'Open Events',
   },
   {
     title: 'Edit Past Events Section',
-    description: 'Manage archived/past events.',
+    description: 'Manage archived/past events (auto-archived after their date).',
     to: '/admin/events?section=archived',
     cta: 'Open Past Events',
   },

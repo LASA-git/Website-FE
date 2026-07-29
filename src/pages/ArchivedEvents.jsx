@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { fetchArchivedEvents } from '../api/events';
 import LoadingState from '../components/common/LoadingState';
 import ErrorState from '../components/common/ErrorState';
@@ -55,6 +56,26 @@ export default function ArchivedEvents() {
                   to={`/events/${event._id || event.id}`}
                 />
               ))}
+            </div>
+          )}
+
+          {!loading && !error && (
+            <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
+              <Link
+                to="/events"
+                className="inline-flex items-center gap-2 rounded-full border border-lasa-200 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-widest text-lasa-600 shadow-sm transition-all hover:-translate-y-0.5 hover:bg-lasa-100"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to events
+              </Link>
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 rounded-full border border-lasa-200 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-widest text-lasa-600 shadow-sm transition-all hover:-translate-y-0.5 hover:bg-lasa-100"
+              >
+                Back to home
+              </Link>
             </div>
           )}
         </div>

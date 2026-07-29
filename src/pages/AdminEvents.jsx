@@ -151,9 +151,9 @@ export default function AdminEvents() {
         <div className="mt-8 space-y-10">
           {selectedSection === 'current' ? (
             <EventSection
-              title="Current Year"
+              title="Upcoming Events"
               events={currentEvents}
-              emptyLabel="No current-year events yet."
+              emptyLabel="No upcoming events yet."
               actions={(event) => (
                 <AdminActions
                   event={event}
