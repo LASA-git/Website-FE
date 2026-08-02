@@ -158,12 +158,12 @@ export default function OurActivities() {
             </li>
           </ul>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link
+            {/* <Link
               to="/volunteer"
               className="inline-flex items-center rounded-full bg-white px-5 py-2 text-xs font-semibold uppercase tracking-wide text-lasa-700 transition-all hover:-translate-y-0.5"
             >
               Volunteer with us
-            </Link>
+            </Link> */}
             <Link
               to="/contact"
               className="inline-flex items-center rounded-full border border-lasa-100 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white transition-all hover:-translate-y-0.5 hover:bg-white/10"

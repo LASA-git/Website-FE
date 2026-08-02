@@ -130,24 +130,24 @@ export default function EventDetails() {
           Back to events
         </Link>
 
+        {heroImage ? (
+          <button
+            type="button"
+            onClick={() => setFullscreenOpen(true)}
+            aria-label={`View ${eventTitle} flyer fullscreen`}
+            className="relative mx-auto mt-6 block w-full max-w-sm cursor-zoom-in overflow-hidden rounded-2xl border border-lasa-200 bg-white shadow-md transition hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lasa-300"
+            style={{ aspectRatio: EVENT_FLYER_ASPECT_RATIO }}
+          >
+            <img
+              src={heroImage}
+              alt={eventTitle}
+              className="absolute inset-0 h-full w-full object-contain"
+            />
+          </button>
+        ) : null}
+
         <div className="mt-6 overflow-hidden rounded-3xl border border-lasa-200 bg-white shadow-lg">
-          {heroImage ? (
-            <div className="border-b border-lasa-200 bg-lasa-50 p-4 sm:p-6">
-              <button
-                type="button"
-                onClick={() => setFullscreenOpen(true)}
-                aria-label={`View ${eventTitle} flyer fullscreen`}
-                className="relative mx-auto block w-full max-w-sm cursor-zoom-in overflow-hidden rounded-xl border border-lasa-200 bg-white shadow-sm transition hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lasa-300"
-                style={{ aspectRatio: EVENT_FLYER_ASPECT_RATIO }}
-              >
-                <img
-                  src={heroImage}
-                  alt={eventTitle}
-                  className="absolute inset-0 h-full w-full object-contain"
-                />
-              </button>
-            </div>
-          ) : (
+          {!heroImage && (
             <div className="flex h-48 items-center justify-center border-b border-lasa-200 bg-lasa-100 text-sm text-lasa-500">
               No image available
             </div>
