@@ -26,7 +26,7 @@ export default function App() {
     <BrowserRouter>
       <RouteScrollToTop />
       <Navbar />
-      <main className="pt-24">
+      <main className="pt-[5.5rem] sm:pt-28">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about-us" element={<AboutUs />} />

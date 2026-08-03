@@ -7,12 +7,12 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-white border-t border-lasa-200 pt-12 pb-8 mt-16 sm:pt-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 lg:gap-16 mb-12">
+    <footer className="mt-16 border-t border-lasa-200 bg-white pb-8 pt-12 sm:pt-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-16">
+        <div className="mb-12 grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-3 lg:gap-16">
           {/* Logo & Intro */}
-          <div className="flex flex-col items-start text-left min-w-0">
-            <Link to="/" className="inline-flex w-full max-w-full items-center gap-2 sm:gap-3 mb-4 min-w-0">
+          <div className="flex min-w-0 flex-col items-start text-left">
+            <Link to="/" className="mb-4 inline-flex w-full max-w-full min-w-0 items-center gap-2 sm:gap-3">
               <img src={logoEmblem} alt="LASA Foundation Logo" className="h-20 w-auto flex-shrink-0 sm:h-24" />
               <img
                 src={logoWrite}
@@ -20,20 +20,20 @@ export default function Footer() {
                 className="h-8 w-auto max-w-[50vw] object-contain sm:h-11 sm:max-w-none"
               />
             </Link>
-            <p className="text-lasa-500 text-sm leading-relaxed max-w-xs">
+            <p className="max-w-xs text-sm leading-relaxed text-lasa-500">
               A charitable organization dedicated to community service based on Truth, Non-violence, Peace, Love, and Right Conduct.
             </p>
           </div>
 
           {/* Quick Links */}
           <div className="flex flex-col items-start">
-            <h3 className="text-lg font-bold text-lasa-600 mb-6">Quick Links</h3>
+            <h3 className="mb-6 text-lg font-bold text-lasa-600">Quick Links</h3>
             <ul className="flex flex-col gap-3 text-left">
               {NAV_LINKS.map((link) => (
                 <li key={link.path}>
                   <Link
                     to={link.path}
-                    className="text-lasa-500 hover:text-lasa-600 transition-colors font-medium text-sm"
+                    className="text-sm font-medium text-lasa-500 transition-colors hover:text-lasa-600"
                   >
                     {link.label}
                   </Link>
@@ -44,10 +44,10 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div className="flex flex-col items-start">
-            <h3 className="text-lg font-bold text-lasa-600 mb-6">Contact Us</h3>
-            <ul className="flex flex-col gap-4 text-sm text-lasa-500 font-medium">
+            <h3 className="mb-6 text-lg font-bold text-lasa-600">Contact Us</h3>
+            <ul className="flex flex-col gap-4 text-sm font-medium text-lasa-500">
               <li className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-lasa-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-lasa-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
@@ -56,18 +56,18 @@ export default function Footer() {
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-lasa-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="h-5 w-5 flex-shrink-0 text-lasa-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
-                <a href="tel:+19787104012" className="hover:text-lasa-600 transition-colors">
+                <a href="tel:+19787104012" className="transition-colors hover:text-lasa-600">
                   +1 (978) 710 4012
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <svg className="w-5 h-5 text-lasa-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="h-5 w-5 flex-shrink-0 text-lasa-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <a href="mailto:info@lasane.org" className="hover:text-lasa-600 transition-colors">
+                <a href="mailto:info@lasane.org" className="transition-colors hover:text-lasa-600">
                   info@lasane.org
                 </a>
               </li>
@@ -76,14 +76,14 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row items-center md:items-start justify-between pt-8 border-t border-lasa-200/60 gap-6 md:gap-4">
-          <p className="text-xs font-medium text-lasa-500/80 text-center md:text-left">
+        <div className="flex flex-col items-center justify-between gap-6 border-t border-lasa-200/60 pt-8 md:flex-row md:items-start md:gap-4">
+          <p className="text-center text-xs font-medium text-lasa-500/80 md:text-left">
             © {currentYear} LASA Foundation Inc. All Rights Reserved.
           </p>
-          <div className="flex flex-wrap justify-center md:justify-end items-center gap-4 md:gap-6 text-xs font-medium text-lasa-500/80">
-            <Link to="/" className="hover:text-lasa-600 transition-colors">Legal</Link>
-            <Link to="/" className="hover:text-lasa-600 transition-colors">Privacy Policy</Link>
-            <Link to="/" className="hover:text-lasa-600 transition-colors">Terms & Conditions</Link>
+          <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium text-lasa-500/80 md:justify-end md:gap-6">
+            <Link to="/" className="transition-colors hover:text-lasa-600">Legal</Link>
+            <Link to="/" className="transition-colors hover:text-lasa-600">Privacy Policy</Link>
+            <Link to="/" className="transition-colors hover:text-lasa-600">Terms & Conditions</Link>
           </div>
         </div>
       </div>

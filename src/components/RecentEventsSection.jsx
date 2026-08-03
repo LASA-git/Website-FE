@@ -2,7 +2,7 @@ import RecentEventsGallery from './RecentEventsGallery';
 
 export default function RecentEventsSection() {
   return (
-    <section className="w-full pt-4 pb-12 sm:pt-6 sm:pb-16 md:pt-8 md:pb-24">
+    <section className="w-full pb-12 pt-4 sm:pb-16 sm:pt-6 md:pb-24 md:pt-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-16">
         <div className="mb-8 text-center">
           <h2 className="text-2xl font-display text-lasa-700 sm:text-3xl md:text-4xl">

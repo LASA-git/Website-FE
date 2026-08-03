@@ -97,6 +97,16 @@ export default function UpcomingEventsGallery() {
     }
   }, [currentPage, totalPages]);
 
+  useEffect(() => {
+    if (!showCarousel || totalPages <= 1 || selectedEvent) return undefined;
+
+    const timer = setInterval(() => {
+      setCurrentPage((prev) => (prev + 1) % totalPages);
+    }, 4000);
+
+    return () => clearInterval(timer);
+  }, [showCarousel, totalPages, selectedEvent]);
+
   const goToPage = (page) => {
     if (!totalPages) return;
     const bounded = ((page % totalPages) + totalPages) % totalPages;
@@ -105,14 +115,14 @@ export default function UpcomingEventsGallery() {
 
   return (
     <>
-      <section className="w-full py-12 sm:py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
-          <div className="flex flex-col gap-6 text-center">
+      <section className="w-full py-8 sm:py-10 md:py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="flex flex-col gap-4 text-center">
             <div>
               <h2 className="text-2xl font-display text-lasa-700 sm:text-3xl md:text-4xl">
                 Upcoming Events
               </h2>
-              <p className="text-sm text-lasa-600/80 mt-3 max-w-2xl mx-auto sm:text-base md:text-lg">
+              <p className="mt-3 max-w-2xl mx-auto text-sm text-lasa-600/80 sm:text-base md:text-lg">
                 Stay updated with our upcoming community service events and activities.
               </p>
             </div>
@@ -129,7 +139,7 @@ export default function UpcomingEventsGallery() {
             </div>
           </div>
 
-          <div className="mt-10">
+          <div className="mt-6">
             {loading && <LoadingState message="Loading events..." />}
             {!loading && error && <ErrorState message={error} onRetry={loadEvents} />}
             {!loading && !error && !events.length && (
@@ -139,9 +149,9 @@ export default function UpcomingEventsGallery() {
               />
             )}
             {!loading && !error && displayEvents.length > 0 && (
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <div
-                  className="grid gap-8 justify-items-center"
+                  className="grid gap-6 justify-items-center"
                   style={{ gridTemplateColumns: `repeat(${itemsPerPage}, minmax(0, 1fr))` }}
                 >
                 {visibleEvents.map((event) => {
@@ -229,7 +239,9 @@ export default function UpcomingEventsGallery() {
                           key={page}
                           onClick={() => goToPage(page)}
                           className={`h-2.5 rounded-full transition-all ${
-                            page === currentPage ? 'w-6 bg-lasa-600' : 'w-2.5 bg-lasa-300 hover:bg-lasa-400'
+                            page === currentPage
+                              ? 'w-6 bg-lasa-600'
+                              : 'w-2.5 bg-lasa-300 hover:bg-lasa-400'
                           }`}
                           aria-label={`Go to events page ${page + 1}`}
                         />

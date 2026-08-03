@@ -62,24 +62,24 @@ export default function Navbar() {
         : 'bg-white'
         }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
-        <div className="flex items-center h-20 sm:h-24">
+      <div className="mx-auto w-full max-w-[90rem] px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between gap-4 h-[5.5rem] sm:h-28">
           {/* Logo */}
-          <Link to="/" className="flex min-w-0 flex-shrink items-center gap-2 sm:gap-4">
+          <Link to="/" className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4 lg:gap-5">
             <img
               src="/finallogo.png"
               alt="LASA Foundation"
-              className="h-14 w-auto flex-shrink-0 sm:h-[4.5rem]"
+              className="h-16 w-auto flex-shrink-0 sm:h-[5.25rem] lg:h-24"
             />
             <img
               src="/write.jpeg"
               alt="LASA Foundation — Love All, Serve All"
-              className="h-8 w-auto max-w-[42vw] object-contain sm:h-11 sm:max-w-none"
+              className="h-9 w-auto max-w-[48vw] object-contain sm:h-12 sm:max-w-none lg:h-14"
             />
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:ml-14 lg:flex items-center gap-1 xl:ml-20">
+          <nav className="hidden lg:flex items-center gap-1 shrink-0">
             {NAV_LINKS.map((item) => (
               <NavItem key={item.path} item={item} />
             ))}
@@ -88,7 +88,7 @@ export default function Navbar() {
           {/* Mobile hamburger */}
           <button
             type="button"
-            className="ml-auto lg:hidden p-1.5 rounded-md text-lasa-500 hover:bg-lasa-200 transition-colors"
+            className="ml-2 shrink-0 lg:hidden p-1.5 rounded-md text-lasa-500 hover:bg-lasa-200 transition-colors"
             onClick={() => setMobileOpen((prev) => !prev)}
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}

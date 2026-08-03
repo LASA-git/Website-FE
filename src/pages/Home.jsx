@@ -7,9 +7,9 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="flex items-start pt-6 md:pt-10 lg:pt-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 w-full">
-          <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-10">
+      <section className="flex items-start pt-4 md:pt-6 lg:pt-10 pb-4 md:pb-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 w-full">
+          <div className="grid items-center gap-6 lg:grid-cols-2 lg:gap-8">
             <div className="text-center lg:text-left">
               <div className="mx-auto w-fit max-w-full lg:mx-0">
                 <h1 className="mt-4 font-display leading-tight text-lasa-700">
@@ -49,17 +49,17 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mx-auto flex w-full max-w-sm flex-col items-center rounded-3xl border border-lasa-200 bg-white/90 px-10 py-10 shadow-xl sm:max-w-md lg:mx-0 lg:max-w-md lg:justify-self-end lg:px-12 lg:py-12">
+            <div className="mx-auto flex w-full max-w-sm flex-col items-center rounded-3xl border border-lasa-200 bg-white/90 px-8 py-8 shadow-xl sm:max-w-md lg:mx-0 lg:max-w-md lg:justify-self-end lg:px-10 lg:py-10">
               <img
                 src="/finallogo.png"
                 alt="LASA Foundation Logo"
-                className="w-64 h-auto sm:w-72 lg:w-80"
+                className="w-56 h-auto sm:w-64 lg:w-72"
               />
 
               <img
                 src="/write.jpeg"
                 alt="Love All Serve All - LASA Foundation Inc."
-                className="mt-6 w-full max-w-[22rem] h-auto"
+                className="mt-4 w-full max-w-[20rem] h-auto"
               />
 
             </div>
